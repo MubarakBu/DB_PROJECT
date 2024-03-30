@@ -1,5 +1,5 @@
 
-
+# song writers table 
 CREATE TABLE song_writers (
 song_writer_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
 username VARCHAR(30) NOT NULL,
@@ -9,6 +9,7 @@ email VARCHAR(50) NOT NULL,
 pass VARCHAR(20) NOT NULL
 );
 
+# payments table 
 CREATE TABLE payments (
 payment_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
 song_writer_id_fk INT NOT NULL,
@@ -32,6 +33,7 @@ REFERENCES songs(song_id)
 ON DELETE CASCADE	
 ON UPDATE CASCADE;
 
+# registrations table 
 CREATE TABLE registrations (
 register_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
 song_writer_id_fk INT NOT NULL,
@@ -60,6 +62,7 @@ REFERENCES songs(song_id)
 ON DELETE CASCADE	
 ON UPDATE CASCADE;
 
+# copyright table 
 CREATE TABLE copyright_info (
 copyright_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
 copyright_info TEXT NOT NULL,
@@ -73,3 +76,32 @@ REFERENCES registrations(register_id)
 ON DELETE CASCADE	
 ON UPDATE CASCADE;
 
+# label table 
+CREATE TABLE label (
+label_id INT PRIMARY KEY NOT NULL,
+label_name VARCHAR(20) NOT NULL,
+fk_song_id INT NOT NULL,
+FOREIGN KEY (fk_song_id)
+REFERENCES songs (song_id)
+ON DELETE CASCADE
+ON UPDATE CASCADE
+);
+
+# publisher table 
+CREATE TABLE publisher (
+publisher_id INT PRIMARY KEY NOT NULL,
+first_name VARCHAR(20) NOT NULL,
+last_name VARCHAR(20) NOT NULL
+);
+
+# song metadata table 
+CREATE TABLE song_metadata (
+ metadata_id INT PRIMARY KEY NOT NULL,
+release_date DATETIME NOT NULL,
+duration TIME NOT NULL,
+language VARCHAR(20) NOT NULL,
+FOREIGN KEY (fk_song_id)
+REFERENCES songs (song_id)
+ON DELETE CASCADE
+ON UPDATE CASCADE
+);
