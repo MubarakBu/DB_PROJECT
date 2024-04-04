@@ -5,10 +5,10 @@ from flask import jsonify
 
 app = Flask(__name__)
 
-app.config['MYSQL_HOST'] = '164.90.137.194'
-app.config['MYSQL_USER'] = 'mfb56'
-app.config['MYSQL_PASSWORD'] = 'InfSci2710_4612667'
-app.config['MYSQL_DB'] = 'mfb56'
+app.config['MYSQL_HOST'] = ''
+app.config['MYSQL_USER'] = ''
+app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_DB'] = ''
 
 mysql = MySQL(app)
 
