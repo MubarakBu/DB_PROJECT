@@ -5,6 +5,7 @@ from flask import jsonify
 
 app = Flask(__name__)
 
+## MySQL configuration 
 app.config['MYSQL_HOST'] = ''
 app.config['MYSQL_USER'] = ''
 app.config['MYSQL_PASSWORD'] = ''
