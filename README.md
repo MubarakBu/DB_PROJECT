@@ -74,3 +74,5 @@ pip install -r requirements.txt
 • Copy the contents of the config file example and paste it into config.py.
 
 • Replace the placeholder values with your actual configuration information.
+
+7. Import The SQL Dump file to your MySQL
