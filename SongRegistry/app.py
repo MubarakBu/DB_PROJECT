@@ -17,11 +17,6 @@ app.config['MYSQL_DB'] = app.config['MYSQL_DB']
 
 mysql = MySQL(app)
 
-account_post_args = reqparse.RequestParser()
-account_post_args.add_argument("balance", type=float, help="put balance")
-account_post_args.add_argument("account_type", type=str, help="put balance")
-account_post_args.add_argument("date_opened", type=datetime, help="put balance")
-account_post_args.add_argument("account_status", type=str, help="put status")
 
     
 class SongWriters(Resource):
@@ -64,11 +59,14 @@ class Songs(Resource):
         
         data = request.json
         songTitle = data.get('songTitle')
+        genreId = data.get('genreId')
+        albumId = data.get('albumId')
+        publisherId = data.get('publisherId')
 
         # Insert data into the database
         cur = mysql.connection.cursor()
-        cur.execute('''INSERT INTO songs (song_title) 
-                       VALUES (%s)''', (songTitle))
+        cur.execute('''INSERT INTO songs (song_title, fk_genre_id, fk_album_id, fk_publisher_id) 
+                       VALUES (%s, %s, %s, %s)''', (songTitle, genreId, albumId, publisherId))
         mysql.connection.commit()
         cur.close()
 
@@ -167,85 +165,7 @@ class Genre(Resource):
         cur.close()
 
         return {'message': 'Genre Added successfully'}, 201
-    
 
-class SongGenre(Resource):
-    def get(self):
-        cur = mysql.connection.cursor()
-        cur.execute('''SELECT s.song_title, g.genre_name FROM songs s
-                        JOIN song_genre sg ON s.song_id = sg.fk_song_id
-                        JOIN genres g ON sg.fk_genre_id = g.genre_id''')
-        data = cur.fetchall()
-        cur.close
-        return jsonify(data)
-    
-    def post(self):
-
-        data = request.json
-        sognId = data.get('sognId')
-        genreId = data.get('genreId')
-
-        # Insert data into the database
-        cur = mysql.connection.cursor()
-        cur.execute('''INSERT INTO song_genre (fk_song_id, fk_genre_id) 
-                       VALUES (%s, %s)''', (sognId, genreId))
-        mysql.connection.commit()
-        cur.close()
-
-        return {'message': 'SongGenre Added successfully'}, 201
-    
-
-class SongAlbum(Resource):
-    def get(self):
-        cur = mysql.connection.cursor()
-        cur.execute('''SELECT s.song_title, a.album_title FROM songs s
-                        JOIN song_album sa ON s.song_id = sa.fk_song_id
-                        JOIN album a ON sa.fk_album_id = a.album_id''')
-        data = cur.fetchall()
-        cur.close
-        return jsonify(data)
-    
-    def post(self):
-
-        data = request.json
-        sognId = data.get('sognId')
-        albumId = data.get('albumId')
-
-        # Insert data into the database
-        cur = mysql.connection.cursor()
-        cur.execute('''INSERT INTO song_album (fk_song_id, fk_album_id) 
-                       VALUES (%s, %s)''', (sognId, albumId))
-        mysql.connection.commit()
-        cur.close()
-
-        return {'message': 'SongAlbum Added successfully'}, 201
-
-
-class SongPublisher(Resource):
-    def get(self):
-        cur = mysql.connection.cursor()
-        cur.execute('''SELECT s.song_title, CONCAT(p.first_name, " ", p.last_name) FROM songs s
-                        JOIN song_publisher sp ON s.song_id = sp.fk_song_id
-                        JOIN publisher p ON sp.fk_publisher_id = p.publisher_id''')
-        data = cur.fetchall()
-        cur.close
-        return jsonify(data)
-    
-    def post(self):
-
-        data = request.json
-        sognId = data.get('sognId')
-        publisherId = data.get('publisherId')
-
-        # Insert data into the database
-        cur = mysql.connection.cursor()
-        cur.execute('''INSERT INTO song_publisher (fk_song_id, fk_publisher_id) 
-                       VALUES (%s, %s)''', (sognId, publisherId))
-        mysql.connection.commit()
-        cur.close()
-
-        return {'message': 'SongPublisher Added successfully'}, 201
-    
 
 class SongArtist(Resource):
     def get(self):
@@ -307,9 +227,6 @@ api.add_resource(Album, "/album")
 api.add_resource(Artist, "/artist")
 api.add_resource(Publisher, "/publisher")
 api.add_resource(Genre, "/genre")
-api.add_resource(SongGenre, "/songgenre")
-api.add_resource(SongAlbum, "/songalbum")
-api.add_resource(SongPublisher, "/songpublisher")
 api.add_resource(SongArtist, "/songartist")
 api.add_resource(SongSongwriter, "/songsongwriter")
 
