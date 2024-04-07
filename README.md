@@ -68,6 +68,9 @@ python -m venv env
 pip install -r requirements.txt
 ```
 6. Create a Config File:
+
 • Create a new file named config.py in the SongRegistry directory.
+
 • Copy the contents of the config file example and paste it into config.py.
+
 • Replace the placeholder values with your actual configuration information.
