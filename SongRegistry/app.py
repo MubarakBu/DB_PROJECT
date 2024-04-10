@@ -63,16 +63,43 @@ class Songs(Resource):
         albumId = data.get('albumId')
         publisherId = data.get('publisherId')
         userId = data.get('userId')
+        labelId = data.get('labelId')
 
         # Insert data into the database
         cur = mysql.connection.cursor()
-        cur.execute('''INSERT INTO songs (song_title, fk_genre_id, fk_album_id, fk_publisher_id, fk_user_id) 
-                       VALUES (%s, %s, %s, %s, %s)''', (songTitle, genreId, albumId, publisherId, userId))
+        cur.execute('''INSERT INTO songs (song_title, fk_genre_id, fk_album_id, fk_publisher_id, fk_user_id, fk_label_id) 
+                       VALUES (%s, %s, %s, %s, %s)''', (songTitle, genreId, albumId, publisherId, userId, labelId))
         mysql.connection.commit()
         cur.close()
 
         return {'message': 'Song Added successfully'}, 201
+
+
+class SongMetadata(Resource):
+    def get(self):
+        cur = mysql.connection.cursor()
+        cur.execute('''SELECT * FROM song_metadata''')
+        data = cur.fetchall()
+        cur.close
+        return jsonify(data)
     
+    def post(self):
+
+        data = request.json
+        releaseDate = data.get('releaseDate')
+        duration = data.get('duration')
+        songLanguage = data.get('songLanguage')
+        songId = data.get('songId')
+
+        # Insert data into the database
+        cur = mysql.connection.cursor()
+        cur.execute('''INSERT INTO song_metadata (release_date, duration, song_language, fk_song_id) 
+                       VALUES (%s, %s)''', (releaseDate, duration, songLanguage, songId))
+        mysql.connection.commit()
+        cur.close()
+
+        return {'message': 'album Added successfully'}, 201
+
 
 class Albums(Resource):
     def get(self):
@@ -221,6 +248,103 @@ class AlbumArtists(Resource):
         return {'message': 'AlbumArtists Added successfully'}, 201
 
 
+class Copyright(Resource):
+    def get(self):
+        cur = mysql.connection.cursor()
+        cur.execute('''SELECT * FROM copyright''')
+        data = cur.fetchall()
+        cur.close
+        return jsonify(data)
+    
+    def post(self):
+
+        data = request.json
+        songId = data.get('songId')
+        copyrightHolder = data.get('copyrightHolder')
+        registrationDate = data.get('registrationDate')
+
+        # Insert data into the database
+        cur = mysql.connection.cursor()
+        cur.execute('''INSERT INTO copyright (fk_song_id, copyright_holder, registration_data) 
+                       VALUES (%s, %s, %s)''', (songId, copyrightHolder, registrationDate))
+        mysql.connection.commit()
+        cur.close()
+
+        return {'message': 'Copyright Added successfully'}, 201
+
+
+class Label(Resource):
+    def get(self):
+        cur = mysql.connection.cursor()
+        cur.execute('''SELECT * FROM label''')
+        data = cur.fetchall()
+        cur.close
+        return jsonify(data)
+    
+    def post(self):
+
+        data = request.json
+        labelName = data.get('labelName')
+
+        # Insert data into the database
+        cur = mysql.connection.cursor()
+        cur.execute('''INSERT INTO label (label_name) 
+                       VALUES (%s)''', (labelName))
+        mysql.connection.commit()
+        cur.close()
+
+        return {'message': 'Label Added successfully'}, 201
+
+
+class Registrations(Resource):
+    def get(self):
+        cur = mysql.connection.cursor()
+        cur.execute('''SELECT * FROM registrations''')
+        data = cur.fetchall()
+        cur.close
+        return jsonify(data)
+    
+    def post(self):
+
+        data = request.json
+        songId = data.get('songId')
+        registration_date = data.get('registration_date')
+
+        # Insert data into the database
+        cur = mysql.connection.cursor()
+        cur.execute('''INSERT INTO registrations (fk_song_id, registration_date) 
+                       VALUES (%s, %s)''', (songId, registration_date))
+        mysql.connection.commit()
+        cur.close()
+
+        return {'message': 'Registration Added successfully'}, 201
+
+
+class Payments(Resource):
+    def get(self):
+        cur = mysql.connection.cursor()
+        cur.execute('''SELECT * FROM payments''')
+        data = cur.fetchall()
+        cur.close
+        return jsonify(data)
+    
+    def post(self):
+
+        data = request.json
+        amount = data.get('amount')
+        paymentMethod = data.get('paymentMethod')
+        paymentDate = data.get('paymentDate')
+        songId = data.get('songId')
+
+        # Insert data into the database
+        cur = mysql.connection.cursor()
+        cur.execute('''INSERT INTO label (amount, payment_method, payment_date, song_id) 
+                       VALUES (%s)''', (amount, paymentMethod, paymentDate, songId))
+        mysql.connection.commit()
+        cur.close()
+
+        return {'message': 'Label Added successfully'}, 201
+
 
 
 
@@ -232,6 +356,11 @@ api.add_resource(Publisher, "/publisher")
 api.add_resource(Genre, "/genre")
 api.add_resource(SongArtist, "/songartist")
 api.add_resource(AlbumArtists, "/albumartists")
+api.add_resource(Copyright, "/copyright")
+api.add_resource(Label, "/label")
+api.add_resource(Registrations, "/registrations")
+api.add_resource(Payments, "/payments")
+api.add_resource(SongMetadata, "/songmetadata")
 
 
 if __name__ == '__main__':
