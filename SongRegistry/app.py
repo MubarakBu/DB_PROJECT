@@ -18,6 +18,52 @@ app.config['MYSQL_DB'] = app.config['MYSQL_DB']
 mysql = MySQL(app)
 
 
+class getUserId(Resource):
+    def get(self):
+        username = request.args.get('username')
+        
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT user_id FROM users WHERE username = %s', (username,))
+        user = cur.fetchall()
+        cur.close()
+
+        return jsonify(user)
+
+
+
+class UserVaildate(Resource):
+    def post(self):
+        data = request.json
+        
+        username = data.get('username')
+        password = data.get('password')
+        
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT * FROM users WHERE username = %s AND pass = %s', (username, password))
+        user = cur.fetchone()
+        cur.close()
+        
+        if user:
+            return {'message': 'User authenticated successfully'}, 200
+        else:
+            return {'error': 'Invalid username or password'}, 401
+        
+
+class GetUserSongs(Resource):
+    def get(self):
+        # data = request.json
+        # username = data.get('username')
+        username = request.args.get('username')
+
+        cur = mysql.connection.cursor()
+        cur.execute('''SELECT s.song_id, s.song_title FROM songs s
+                    JOIN users u ON s.fk_user_id = u.user_id
+                    WHERE u.username = %s''', (username,))
+        data = cur.fetchall()
+        cur.close()
+        
+        return jsonify(data)
+
     
 class Users(Resource):
     def get(self):
@@ -26,6 +72,8 @@ class Users(Resource):
         data = cur.fetchall()
         cur.close
         return jsonify(data)
+        
+    
 
     def post(self):
 
@@ -68,7 +116,7 @@ class Songs(Resource):
         # Insert data into the database
         cur = mysql.connection.cursor()
         cur.execute('''INSERT INTO songs (song_title, fk_genre_id, fk_album_id, fk_publisher_id, fk_user_id, fk_label_id) 
-                       VALUES (%s, %s, %s, %s, %s)''', (songTitle, genreId, albumId, publisherId, userId, labelId))
+                       VALUES (%s, %s, %s, %s, %s, %s)''', (songTitle, genreId, albumId, publisherId, userId, labelId))
         mysql.connection.commit()
         cur.close()
 
@@ -361,6 +409,9 @@ api.add_resource(Label, "/label")
 api.add_resource(Registrations, "/registrations")
 api.add_resource(Payments, "/payments")
 api.add_resource(SongMetadata, "/songmetadata")
+api.add_resource(UserVaildate, "/uservaildate")
+api.add_resource(GetUserSongs, "/getusersongs")
+api.add_resource(getUserId, "/getuserid")
 
 
 if __name__ == '__main__':

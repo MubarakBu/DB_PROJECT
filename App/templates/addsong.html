@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insert Song</title>
+</head>
+<body>
+    {{ username }}
+    {{ userid }}
+    <h1>Insert New Song</h1>
+    <form action="/insertsong" method="post">
+        <label for="song_title">Song Title:</label>
+        <input type="text" id="song_title" name="song_title" required><br><br>
+
+        <label for="genre">Genre:</label>
+        <select id="genre" name="genre_id">
+            {% for genre in genres %}
+            <option value="{{ genre[0] }}">{{ genre[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="album">Album:</label>
+        <select id="album" name="album_id">
+            {% for album in albums %}
+            <option value="{{ album[0] }}">{{ album[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="publisher">Publisher:</label>
+        <select id="publisher" name="publisher_id">
+            {% for publisher in publishers %}
+            <option value="{{ publisher[0] }}">{{ publisher[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="label">Label:</label>
+        <select id="label" name="label_id">
+            {% for label in labels %}
+            <option value="{{ label[0] }}">{{ label[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
