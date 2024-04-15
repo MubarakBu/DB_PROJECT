@@ -51,8 +51,6 @@ class UserVaildate(Resource):
 
 class GetUserSongs(Resource):
     def get(self):
-        # data = request.json
-        # username = data.get('username')
         username = request.args.get('username')
 
         cur = mysql.connection.cursor()
@@ -105,8 +103,14 @@ class Users(Resource):
 class Songs(Resource):
     # get song title
     def get(self):
+        songId = request.args.get('songId')
         cur = mysql.connection.cursor()
-        cur.execute('''SELECT * FROM songs WHERE''')
+        cur.execute('''SELECT s.song_title, CONCAT(a.first_name, " ", a.last_name), ab.album_title, g.genre_name 
+                    FROM songs s JOIN song_artist sa ON s.song_id = sa.fk_song_id
+                    JOIN artists a ON fk_artist_id = a.artist_id
+                    JOIN albums ab ON s.fk_album_id = ab.album_id
+                    JOIN genres g ON s.fk_genre_id = g.genre_id
+                    WHERE song_id = %s''', (songId,))
         data = cur.fetchall()
         cur.close
         return jsonify(data)
@@ -150,11 +154,11 @@ class SongMetadata(Resource):
         # Insert data into the database
         cur = mysql.connection.cursor()
         cur.execute('''INSERT INTO song_metadata (release_date, duration, song_language, fk_song_id) 
-                       VALUES (%s, %s)''', (releaseDate, duration, songLanguage, songId))
+                       VALUES (%s, %s, %s, %s)''', (releaseDate, duration, songLanguage, songId))
         mysql.connection.commit()
         cur.close()
 
-        return {'message': 'album Added successfully'}, 201
+        return {'message': 'Metadata Added successfully'}, 201
 
 
 class Albums(Resource):

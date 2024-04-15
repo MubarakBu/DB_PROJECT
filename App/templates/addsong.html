@@ -6,10 +6,18 @@
     <title>Insert Song</title>
 </head>
 <body>
-    {{ username }}
-    {{ userid }}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     <h1>Insert New Song</h1>
     <form action="/insertsong" method="post">
+        <!-- First section: Song Details -->
         <label for="song_title">Song Title:</label>
         <input type="text" id="song_title" name="song_title" required><br><br>
 
@@ -47,6 +55,24 @@
             <option value="{{ artist[0] }}">{{ artist[1] }}</option>
             {% endfor %}
         </select><br><br>
+
+        <!-- Second section: Song Information -->
+        <h2>Song Information</h2>
+        <label for="relase_date">Relase Date:</label>
+        <input type="date" id="relase_date" name="relase_date" required><br><br>
+
+        <label for="duration">Duration:</label>
+        <input type="time" id="duration" name="duration" required><br><br>
+
+        <label for="song_language">Language:</label>
+        <select id="song_language" name="song_language">
+            <option value="english">English</option>
+            <option value="other">Other</option>
+        </select><br><br>
+
+        <label for="picture">Select Picture:</label>
+        <input type="file" id="picture" name="picture" accept="image/*" required><br><br>
+        <input type="submit" value="Upload">
 
         <input type="submit" value="Submit">
     </form>

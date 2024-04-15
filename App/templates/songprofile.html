@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Profile</title>
+    <style>
+        .container {
+            display: flex;
+            align-items: center;
+        }
+        .song-pic {
+            width: 200px; /* Adjust the width as needed */
+            height: 200px; /* Adjust the height as needed */
+            margin-right: 20px;
+        }
+        .song-info {
+            flex: 1;
+            background-color: #f0f0f0; /* Background color of the song info box */
+            padding: 20px; /* Padding around the song info */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow for a subtle 3D effect */
+        }
+        .song-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .song-details {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="song_pic_url_here" alt="Song Picture" class="song-pic">
+        <div class="song-info">
+            <h1 class="song-title">{{ songInfo[0][0] }}</h1>
+            <div class="song-details">
+                <p>Artist: {{ songInfo[0][1] }}</p>
+                <p>Album: {{ songInfo[0][2] }}</p>
+                <p>Genre: {{ songInfo[0][3] }}</p>
+                <!-- Add other song details here -->
+            </div>
+        </div>
+    </div>
+</body>
+</html>

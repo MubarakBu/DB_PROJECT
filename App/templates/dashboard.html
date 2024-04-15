@@ -99,7 +99,7 @@
     <tbody>
         {% for song_info in user_songs %}
             <tr>
-                <td>{{ song_info[1] }}</td> <!-- Song Name -->
+                <td><a href="/songprofile?song_id={{ song_info[0] }}">{{ song_info[1] }}</a></td> <!-- Song Name -->
                 <td>{{ song_info[2] }}</td> <!-- Artist Name -->
                 <td>{{ song_info[3] }}</td> <!-- Album Name -->
                 <td>{{ song_info[4] }}</td> <!-- Genre -->

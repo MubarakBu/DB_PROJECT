@@ -136,6 +136,10 @@ def insert():
         user_id = userId
         label_id = request.form['label_id']
         artist_id = request.form['artist_id']
+        ## song metadata 
+        releaseDate = request.form['relase_date']
+        duration = request.form['duration']
+        songLanguage = request.form['song_language']
 
         data = {
             "songTitle": song_title,
@@ -149,11 +153,25 @@ def insert():
         BASE = "http://127.0.0.1:5000/"
         response = requests.post(BASE + "songs", json=data)
 
-        print("Response JSON:", response.json())
+        # print("Response JSON:", response.json())
+        if response.status_code == 500:
+            flash('Song title is already taken. Please choose another title.', 'error')
+            return redirect(url_for('addsong'))
+        else: 
+            print("Response JSON:", response.json())
+
         if response.status_code == 201:
             gsi = "http://127.0.0.1:5000/getsongid"
             gsires = requests.get(gsi, params={"userId": userId, "songName": song_title})
             songId = gsires.json()[0][0]
+
+            metadata = {
+                "releaseDate": releaseDate,
+                "duration": duration,
+                "songLanguage": songLanguage,
+                "songId": songId
+            }
+
 
             songartist = {
                 "sognId": songId,
@@ -163,6 +181,10 @@ def insert():
             BASE = "http://127.0.0.1:5000/"
             response2 = requests.post(BASE + "songartist", json=songartist)
             print("Response JSON:", response2.json())
+
+            BASE = "http://127.0.0.1:5000/"
+            response3 = requests.post(BASE + "songmetadata", json=metadata)
+            print("Response JSON:", response3.json())
 
         # Check the response status and handle accordingly
         
@@ -400,6 +422,16 @@ def labeladded():
 
 
 
+@app.route('/songprofile')
+def songprofile():
+    song_id = request.args.get('song_id')
+    BASE = "http://127.0.0.1:5000/"
+    response = requests.get(BASE + "songs", params={"songId": song_id})
+
+    songInfo = response.json()
+    print(response.json())
+
+    return render_template('songprofile.html', songInfo=songInfo)
 
 
 
