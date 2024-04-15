@@ -56,8 +56,16 @@ class GetUserSongs(Resource):
         username = request.args.get('username')
 
         cur = mysql.connection.cursor()
-        cur.execute('''SELECT s.song_id, s.song_title FROM songs s
+        cur.execute('''SELECT s.song_id, s.song_title, 
+                    CONCAT(a.first_name, a.last_name),
+                    ab.album_title,
+                    g.genre_name 
+                    FROM songs s
                     JOIN users u ON s.fk_user_id = u.user_id
+                    JOIN song_artist sa ON s.song_id = sa.fk_song_id
+                    JOIN artists a ON sa.fk_artist_id = a.artist_id
+                    JOIN albums ab ON s.fk_album_id = ab.album_id
+                    JOIN genres g ON s.fk_genre_id = g.genre_id
                     WHERE u.username = %s''', (username,))
         data = cur.fetchall()
         cur.close()
@@ -98,7 +106,7 @@ class Songs(Resource):
     # get song title
     def get(self):
         cur = mysql.connection.cursor()
-        cur.execute('''SELECT * FROM songs''')
+        cur.execute('''SELECT * FROM songs WHERE''')
         data = cur.fetchall()
         cur.close
         return jsonify(data)
@@ -151,8 +159,9 @@ class SongMetadata(Resource):
 
 class Albums(Resource):
     def get(self):
+        userId = request.args.get('userId')
         cur = mysql.connection.cursor()
-        cur.execute('''SELECT * FROM albums''')
+        cur.execute('''SELECT * FROM albums WHERE user_id = %s''', (userId,))
         data = cur.fetchall()
         cur.close
         return jsonify(data)
@@ -162,11 +171,12 @@ class Albums(Resource):
         data = request.json
         albumTitle = data.get('albumTitle')
         releaseDate = data.get('releaseDate')
+        userId = data.get('userId')
 
         # Insert data into the database
         cur = mysql.connection.cursor()
-        cur.execute('''INSERT INTO albums (album_title, release_date) 
-                       VALUES (%s, %s)''', (albumTitle, releaseDate))
+        cur.execute('''INSERT INTO albums (album_title, release_date, user_id) 
+                       VALUES (%s, %s, %s)''', (albumTitle, releaseDate, userId))
         mysql.connection.commit()
         cur.close()
 
@@ -175,8 +185,9 @@ class Albums(Resource):
 
 class Artists(Resource):
     def get(self):
+        userId = request.args.get('userId')
         cur = mysql.connection.cursor()
-        cur.execute('''SELECT * FROM artists''')
+        cur.execute('''SELECT * FROM artists WHERE fk_user_id = %s''', (userId,))
         data = cur.fetchall()
         cur.close
         return jsonify(data)
@@ -186,11 +197,12 @@ class Artists(Resource):
         data = request.json
         firstName = data.get('firstName')
         lastName = data.get('lastName')
+        userId = data.get('userId')
 
         # Insert data into the database
         cur = mysql.connection.cursor()
-        cur.execute('''INSERT INTO artists (first_name, last_name) 
-                       VALUES (%s, %s)''', (firstName, lastName))
+        cur.execute('''INSERT INTO artists (first_name, last_name, fk_user_id) 
+                       VALUES (%s, %s, %s)''', (firstName, lastName, userId))
         mysql.connection.commit()
         cur.close()
 
@@ -199,8 +211,9 @@ class Artists(Resource):
 
 class Publisher(Resource):
     def get(self):
+        userId = request.args.get('userId')
         cur = mysql.connection.cursor()
-        cur.execute('''SELECT * FROM publisher''')
+        cur.execute('''SELECT * FROM publisher WHERE fk_user_id = %s''', (userId,))
         data = cur.fetchall()
         cur.close
         return jsonify(data)
@@ -210,11 +223,12 @@ class Publisher(Resource):
         data = request.json
         firstName = data.get('firstName')
         lastName = data.get('lastName')
+        userId = data.get('userId')
 
         # Insert data into the database
         cur = mysql.connection.cursor()
-        cur.execute('''INSERT INTO publisher (first_name, last_name) 
-                       VALUES (%s, %s)''', (firstName, lastName))
+        cur.execute('''INSERT INTO publisher (first_name, last_name, fk_user_id) 
+                       VALUES (%s, %s, %s)''', (firstName, lastName, userId))
         mysql.connection.commit()
         cur.close()
 
@@ -323,8 +337,9 @@ class Copyright(Resource):
 
 class Label(Resource):
     def get(self):
+        userId = request.args.get('userId')
         cur = mysql.connection.cursor()
-        cur.execute('''SELECT * FROM label''')
+        cur.execute('''SELECT * FROM label WHERE fk_user_id = %s''', (userId,))
         data = cur.fetchall()
         cur.close
         return jsonify(data)
@@ -333,11 +348,12 @@ class Label(Resource):
 
         data = request.json
         labelName = data.get('labelName')
+        userId = data.get('userId')
 
         # Insert data into the database
         cur = mysql.connection.cursor()
-        cur.execute('''INSERT INTO label (label_name) 
-                       VALUES (%s)''', (labelName))
+        cur.execute('''INSERT INTO label (label_name, fk_user_id) 
+                       VALUES (%s, %s)''', (labelName, userId))
         mysql.connection.commit()
         cur.close()
 
@@ -394,8 +410,31 @@ class Payments(Resource):
         return {'message': 'Label Added successfully'}, 201
 
 
+class getSongId(Resource):
+    def get(self):
+        userId = request.args.get('userId')
+        songName = request.args.get('songName')
+        cur = mysql.connection.cursor()
+        cur.execute('''SELECT song_id FROM songs 
+                    WHERE fk_user_id = %s AND song_title = %s''', (userId,songName,))
+        data = cur.fetchall()
+        cur.close
+        return jsonify(data)
 
 
+class getAlbumId(Resource):
+    def get(self):
+        userId = request.args.get('userId')
+        albumName = request.args.get('albumName')
+        cur = mysql.connection.cursor()
+        cur.execute('''SELECT album_id FROM albums 
+                    WHERE user_id = %s AND album_title = %s''', (userId,albumName,))
+        data = cur.fetchall()
+        cur.close
+        return jsonify(data)
+
+api.add_resource(getAlbumId, "/getalbumid")
+api.add_resource(getSongId, "/getsongid")
 api.add_resource(Users, "/users")
 api.add_resource(Songs, "/songs")
 api.add_resource(Albums, "/album")

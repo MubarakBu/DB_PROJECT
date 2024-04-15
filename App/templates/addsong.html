@@ -41,6 +41,13 @@
             {% endfor %}
         </select><br><br>
 
+        <label for="artist">Artist:</label>
+        <select id="artist" name="artist_id">
+            {% for artist in artists %}
+            <option value="{{ artist[0] }}">{{ artist[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+
         <input type="submit" value="Submit">
     </form>
 </body>

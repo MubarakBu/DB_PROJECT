@@ -14,7 +14,7 @@ response = requests.post(BASE_URL + "uservaildate", json=data)
 # Print the response content for debugging
 print("Response Content:", response.content)
 
-print(response.json()[0])
+
 # Print the response JSON if possible
 try:
     print("Response JSON:", response.json())

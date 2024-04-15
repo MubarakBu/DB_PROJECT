@@ -21,6 +21,13 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
+        .links {
+            border: 2px solid #333;
+            border-radius: 2rem;
+            margin: 0 auto 1rem;
+        }
+        
+
         h1, h2 {
             text-align: center;
         }
@@ -42,24 +49,64 @@
         a {
             text-decoration: none;
             color: #007bff;
+            padding-left: 2%;
         }
 
         a:hover {
             text-decoration: underline;
         }
+
+        table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
     </style>
 </head>
 <body>
+    
     <div class="container">
         <a href="login">Log out</a>
         <h1>Welcome, {{ username }}</h1>
+
+        <div class="links">
+            <a href="/addsong">Add New Song</a>
+            <a href="/album">Create New Album</a>
+            <a href="/artist">Add New Artist</a>
+            <a href="/publisher">Add New Publisher</a>
+            <a href="/label">Add New Label</a>
+        </div>
+
         <h2>Your Songs:</h2>
-        <a href="/addsong">add new song</a>
-        <ul>
-            {% for song_list in user_songs %}
-                <li><a href="#">{{ song_list[1] }}</a></li>
-            {% endfor %}
-        </ul>
+
+        
+        <table>
+    <thead>
+        <tr>
+            <th>Song</th>
+            <th>Artist</th>
+            <th>Album</th>
+            <th>Genre</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for song_info in user_songs %}
+            <tr>
+                <td>{{ song_info[1] }}</td> <!-- Song Name -->
+                <td>{{ song_info[2] }}</td> <!-- Artist Name -->
+                <td>{{ song_info[3] }}</td> <!-- Album Name -->
+                <td>{{ song_info[4] }}</td> <!-- Genre -->
+            </tr>
+        {% endfor %}
+    </tbody>
+    </table>
     </div>
 </body>
 </html>

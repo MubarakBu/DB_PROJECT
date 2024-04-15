@@ -89,26 +89,35 @@ def loginsuccess():
 
 
 
-
+##################################### ADD SONG ############################################
 
 @app.route('/addsong', methods=['GET', 'POST'])
 def addsong():
+    username = session.get('username')
+    gui = "http://127.0.0.1:5000/getuserid"
+    guires = requests.get(gui, params={"username": username})
+    userId = guires.json()[0][0]
+    
     BASE_GENRE = "http://127.0.0.1:5000/genre"
     BASE_ALBUM = "http://127.0.0.1:5000/album"
     BASE_PUBLISHER = "http://127.0.0.1:5000/publisher"
     BASE_LABEL = "http://127.0.0.1:5000/label"
+    BASE_ARTIST = "http://127.0.0.1:5000/artist"
     response1 = requests.get(BASE_GENRE)
-    response2 = requests.get(BASE_ALBUM)
-    response3 = requests.get(BASE_PUBLISHER)
-    response4 = requests.get(BASE_LABEL)
+    response2 = requests.get(BASE_ALBUM, params={"userId": userId})
+    response3 = requests.get(BASE_PUBLISHER, params={"userId": userId})
+    response4 = requests.get(BASE_LABEL, params={"userId": userId})
+    response5 = requests.get(BASE_ARTIST, params={"userId": userId})
 
     genres = response1.json()
     albums = response2.json()
     publishers = response3.json()
     labels = response4.json()
+    artists = response5.json()
+    
 
-    return render_template('addsong.html', genres=genres, albums=albums, publishers=publishers, labels=labels)
-
+    return render_template('addsong.html', genres=genres, albums=albums, publishers=publishers, 
+                           labels=labels, artists=artists)
 
 
 
@@ -126,6 +135,7 @@ def insert():
         publisher_id = request.form['publisher_id']
         user_id = userId
         label_id = request.form['label_id']
+        artist_id = request.form['artist_id']
 
         data = {
             "songTitle": song_title,
@@ -140,6 +150,19 @@ def insert():
         response = requests.post(BASE + "songs", json=data)
 
         print("Response JSON:", response.json())
+        if response.status_code == 201:
+            gsi = "http://127.0.0.1:5000/getsongid"
+            gsires = requests.get(gsi, params={"userId": userId, "songName": song_title})
+            songId = gsires.json()[0][0]
+
+            songartist = {
+                "sognId": songId,
+                "artistId": artist_id
+            }
+
+            BASE = "http://127.0.0.1:5000/"
+            response2 = requests.post(BASE + "songartist", json=songartist)
+            print("Response JSON:", response2.json())
 
         # Check the response status and handle accordingly
         
@@ -154,7 +177,7 @@ def insertsuccess():
 
 
 
-
+#################################### HOME #################################
 
 
 @app.route('/dashboard')
@@ -175,6 +198,209 @@ def dashboard():
 
     # Render the dashboard template with the user's information and songs
     return render_template('dashboard.html', username=username, user_songs=songs)
+
+################### ADD ALBUM #############################
+
+@app.route('/album')
+def addalbum():
+    username = session.get('username')
+    gui = "http://127.0.0.1:5000/getuserid"
+    guires = requests.get(gui, params={"username": username})
+    userId = guires.json()[0][0]
+
+    BASE_ARTIST = "http://127.0.0.1:5000/artist"
+    response5 = requests.get(BASE_ARTIST, params={"userId": userId})
+    artists = response5.json()
+
+    
+    return render_template('newalbum.html', artists=artists)
+
+
+@app.route('/addalbum', methods=['GET', 'POST'])
+def insertalbum():
+    if request.method == 'POST':
+        username = session.get('username')
+        gui = "http://127.0.0.1:5000/getuserid"
+        guires = requests.get(gui, params={"username": username})
+        userId = guires.json()[0][0]
+
+
+        
+
+        # Extract username and password from the form
+        albumTitle = request.form['album_title']
+        releaseDate = request.form['relase_date']
+        artist_id = request.form['artist_id']
+        user_Id = userId
+       
+
+        data = {
+            "albumTitle": albumTitle,
+            "releaseDate": releaseDate,
+            "userId": user_Id
+        }
+
+        BASE = "http://127.0.0.1:5000/"
+        response = requests.post(BASE + "album", json=data)
+
+        print("Response JSON:", response.json())
+
+        if response.status_code == 201:
+            gai = "http://127.0.0.1:5000/getalbumid"
+            gaires = requests.get(gai, params={"userId": userId, "albumName": albumTitle})
+            albumId = gaires.json()[0][0]
+
+            albumartist = {
+                "albumId": albumId,
+                "artistId": artist_id
+            }
+
+            BASE = "http://127.0.0.1:5000/"
+            response2 = requests.post(BASE + "albumartists", json=albumartist)
+            print("Response JSON:", response2.json())
+            
+        # Check the response status and handle accordingly
+        
+        return redirect(url_for('albumadded'))
+
+    return render_template('newalbum.html')
+
+@app.route('/albumadded')
+def albumadded():
+    return redirect(url_for('dashboard'))
+
+
+
+################### ADD ARTIST #############################
+
+@app.route('/artist')
+def addartist():
+    return render_template('newartist.html')
+
+
+@app.route('/addartist', methods=['GET', 'POST'])
+def insertartist():
+    if request.method == 'POST':
+        username = session.get('username')
+        gui = "http://127.0.0.1:5000/getuserid"
+        guires = requests.get(gui, params={"username": username})
+        userId = guires.json()[0][0]
+        # Extract username and password from the form
+        firstName = request.form['frist_name']
+        lastName = request.form['last_name']
+        userId = userId
+       
+
+        data = {
+            "firstName": firstName,
+            "lastName": lastName,
+            "userId": userId
+        }
+
+        BASE = "http://127.0.0.1:5000/"
+        response = requests.post(BASE + "artist", json=data)
+
+        print("Response JSON:", response.json())
+
+        # Check the response status and handle accordingly
+        
+        return redirect(url_for('artistadded'))
+
+    return render_template('newartist.html')
+
+@app.route('/artistadded')
+def artistadded():
+    return redirect(url_for('dashboard'))
+
+
+
+
+
+################### ADD PUBLISHER #############################
+
+@app.route('/publisher')
+def addpublisher():
+    return render_template('newpublisher.html')
+
+
+@app.route('/addpublisher', methods=['GET', 'POST'])
+def insertpublisher():
+    if request.method == 'POST':
+        username = session.get('username')
+        gui = "http://127.0.0.1:5000/getuserid"
+        guires = requests.get(gui, params={"username": username})
+        userId = guires.json()[0][0]
+        # Extract username and password from the form
+        firstName = request.form['frist_name']
+        lastName = request.form['last_name']
+        userId = userId
+       
+
+        data = {
+            "firstName": firstName,
+            "lastName": lastName,
+            "userId": userId
+        }
+
+        BASE = "http://127.0.0.1:5000/"
+        response = requests.post(BASE + "publisher", json=data)
+
+        print("Response JSON:", response.json())
+
+        # Check the response status and handle accordingly
+        
+        return redirect(url_for('publisheradded'))
+
+    return render_template('newpublisher.html')
+
+@app.route('/publisheradded')
+def publisheradded():
+    return redirect(url_for('dashboard'))
+
+
+################### ADD LABEL #############################
+
+@app.route('/label')
+def addlabel():
+    return render_template('newlabel.html')
+
+
+@app.route('/addlabel', methods=['GET', 'POST'])
+def insertlabel():
+    if request.method == 'POST':
+        username = session.get('username')
+        gui = "http://127.0.0.1:5000/getuserid"
+        guires = requests.get(gui, params={"username": username})
+        userId = guires.json()[0][0]
+        # Extract username and password from the form
+        labelName = request.form['label_name']
+        userId = userId
+       
+
+        data = {
+            "labelName": labelName,
+            "userId": userId
+        }
+
+        BASE = "http://127.0.0.1:5000/"
+        response = requests.post(BASE + "label", json=data)
+
+        print("Response JSON:", response.json())
+
+        # Check the response status and handle accordingly
+        
+        return redirect(url_for('labeladded'))
+
+    return render_template('newlabel.html')
+
+@app.route('/labeladded')
+def labeladded():
+    return redirect(url_for('dashboard'))
+
+
+
+
+
 
 
 if __name__ == '__main__':
