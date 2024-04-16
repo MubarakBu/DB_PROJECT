@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_restful import Api, Resource, reqparse
 from flask_mysqldb import MySQL
 from flask import jsonify
-import datetime
+from datetime import timedelta
 from config import Config
 
 app = Flask(__name__)
@@ -137,12 +137,22 @@ class Songs(Resource):
 
 class SongMetadata(Resource):
     def get(self):
+        songId = request.args.get('songId')
         cur = mysql.connection.cursor()
-        cur.execute('''SELECT * FROM song_metadata''')
+        cur.execute('''SELECT DATE_FORMAT(release_date, '%%Y-%%m-%%d') as release_date, duration, song_language 
+                    FROM song_metadata WHERE fk_song_id = %s''', (songId,))
         data = cur.fetchall()
         cur.close
-        return jsonify(data)
+
+        formatted_data = []
+        for row in data:
+            formatted_row = list(row)
+            formatted_row[1] = str(formatted_row[1])  # Convert timedelta to string
+            formatted_data.append(formatted_row)
+
+        return jsonify(formatted_data)
     
+
     def post(self):
 
         data = request.json

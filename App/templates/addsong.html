@@ -61,8 +61,8 @@
         <label for="relase_date">Relase Date:</label>
         <input type="date" id="relase_date" name="relase_date" required><br><br>
 
-        <label for="duration">Duration:</label>
-        <input type="time" id="duration" name="duration" required><br><br>
+        <label for="duration">Duration (MM:SS):</label>
+        <input type="text" id="duration" name="duration" pattern="[0-5][0-9]:[0-5][0-9]"required><br><br>
 
         <label for="song_language">Language:</label>
         <select id="song_language" name="song_language">
@@ -71,7 +71,7 @@
         </select><br><br>
 
         <label for="picture">Select Picture:</label>
-        <input type="file" id="picture" name="picture" accept="image/*" required><br><br>
+        <input type="file" id="picture" name="picture" accept="image/*" ><br><br>
         <input type="submit" value="Upload">
 
         <input type="submit" value="Submit">

@@ -473,11 +473,14 @@ def songprofile():
     song_id = request.args.get('song_id')
     BASE = "http://127.0.0.1:5000/"
     response = requests.get(BASE + "songs", params={"songId": song_id})
+    response2 = requests.get(BASE + "songmetadata", params={"songId": song_id})
 
     songInfo = response.json()
+    metadata = response2.json()
     print(response.json())
+    print(response2.json())
 
-    return render_template('songprofile.html', songInfo=songInfo)
+    return render_template('songprofile.html', songInfo=songInfo, metadata=metadata)
 
 
 
