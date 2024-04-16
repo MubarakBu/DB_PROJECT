@@ -11,6 +11,8 @@ def login_form():
     return render_template('login.html')
 
 
+############################################# REGISTER ###########################################
+
 @app.route('/register')
 def register_form():
     return render_template('register.html')
@@ -56,6 +58,8 @@ def success():
 
 
 
+##################################### LOGIN ###############################################
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -79,6 +83,7 @@ def login():
             return redirect(url_for('loginsuccess'))
         else:
             # Handle failed login attempt
+            flash('Wrong Username or Password.', 'error')
             return render_template('login.html', error="Invalid username or password")
 
     return render_template('login.html')
@@ -89,11 +94,23 @@ def loginsuccess():
 
 
 
+@app.route('/logout')
+def logout():
+    # Clear the session data
+    session.clear()
+    # Redirect the user to the login page or any other appropriate page
+    return redirect(url_for('login'))
+
+
 ##################################### ADD SONG ############################################
 
 @app.route('/addsong', methods=['GET', 'POST'])
 def addsong():
     username = session.get('username')
+    if not username:
+        # Redirect to login if the user is not logged in
+        return redirect(url_for('login'))
+    
     gui = "http://127.0.0.1:5000/getuserid"
     guires = requests.get(gui, params={"username": username})
     userId = guires.json()[0][0]
@@ -221,11 +238,18 @@ def dashboard():
     # Render the dashboard template with the user's information and songs
     return render_template('dashboard.html', username=username, user_songs=songs)
 
+
+
 ################### ADD ALBUM #############################
 
 @app.route('/album')
 def addalbum():
     username = session.get('username')
+    if not username:
+        # Redirect to login if the user is not logged in
+        return redirect(url_for('login'))
+    
+
     gui = "http://127.0.0.1:5000/getuserid"
     guires = requests.get(gui, params={"username": username})
     userId = guires.json()[0][0]
@@ -297,6 +321,11 @@ def albumadded():
 
 @app.route('/artist')
 def addartist():
+    username = session.get('username')
+    if not username:
+        # Redirect to login if the user is not logged in
+        return redirect(url_for('login'))
+    
     return render_template('newartist.html')
 
 
@@ -342,6 +371,11 @@ def artistadded():
 
 @app.route('/publisher')
 def addpublisher():
+    username = session.get('username')
+    if not username:
+        # Redirect to login if the user is not logged in
+        return redirect(url_for('login'))
+    
     return render_template('newpublisher.html')
 
 
@@ -384,6 +418,11 @@ def publisheradded():
 
 @app.route('/label')
 def addlabel():
+    username = session.get('username')
+    if not username:
+        # Redirect to login if the user is not logged in
+        return redirect(url_for('login'))
+    
     return render_template('newlabel.html')
 
 
@@ -421,9 +460,16 @@ def labeladded():
 
 
 
+################################## SONG PROFILE #####################################
+
 
 @app.route('/songprofile')
 def songprofile():
+    username = session.get('username')
+    if not username:
+        # Redirect to login if the user is not logged in
+        return redirect(url_for('login'))
+    
     song_id = request.args.get('song_id')
     BASE = "http://127.0.0.1:5000/"
     response = requests.get(BASE + "songs", params={"songId": song_id})
