@@ -298,30 +298,30 @@ class SongArtist(Resource):
         return {'message': 'SongArtist Added successfully'}, 201
 
 
-class AlbumArtists(Resource):
-    def get(self):
-        cur = mysql.connection.cursor()
-        cur.execute('''SELECT b.album_title, CONCAT(a.first_name, " ", a.last_name) FROM albums b
-                    JOIN album_artist aa ON b.album_id = aa.fk_album_id
-                    JOIN artists a ON aa.fk_artist_id = a.artist_id''')
-        data = cur.fetchall()
-        cur.close
-        return jsonify(data)
+# class AlbumArtists(Resource):
+#     def get(self):
+#         cur = mysql.connection.cursor()
+#         cur.execute('''SELECT b.album_title, CONCAT(a.first_name, " ", a.last_name) FROM albums b
+#                     JOIN album_artist aa ON b.album_id = aa.fk_album_id
+#                     JOIN artists a ON aa.fk_artist_id = a.artist_id''')
+#         data = cur.fetchall()
+#         cur.close
+#         return jsonify(data)
     
-    def post(self):
+#     def post(self):
 
-        data = request.json
-        albumId = data.get('albumId')
-        artistId = data.get('artistId')
+#         data = request.json
+#         albumId = data.get('albumId')
+#         artistId = data.get('artistId')
 
-        # Insert data into the database
-        cur = mysql.connection.cursor()
-        cur.execute('''INSERT INTO album_artist (fk_album_id, fk_artist_id) 
-                       VALUES (%s, %s)''', (albumId, artistId))
-        mysql.connection.commit()
-        cur.close()
+#         # Insert data into the database
+#         cur = mysql.connection.cursor()
+#         cur.execute('''INSERT INTO album_artist (fk_album_id, fk_artist_id) 
+#                        VALUES (%s, %s)''', (albumId, artistId))
+#         mysql.connection.commit()
+#         cur.close()
 
-        return {'message': 'AlbumArtists Added successfully'}, 201
+#         return {'message': 'AlbumArtists Added successfully'}, 201
 
 
 class Copyright(Resource):
@@ -456,7 +456,6 @@ api.add_resource(Artists, "/artist")
 api.add_resource(Publisher, "/publisher")
 api.add_resource(Genre, "/genre")
 api.add_resource(SongArtist, "/songartist")
-api.add_resource(AlbumArtists, "/albumartists")
 api.add_resource(Copyright, "/copyright")
 api.add_resource(Label, "/label")
 api.add_resource(Registrations, "/registrations")

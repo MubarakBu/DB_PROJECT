@@ -12,12 +12,6 @@
         <input type="text" id="album_title" name="album_title" required><br><br>
         <label for="relase_date">Relase Date:</label>
         <input type="date" id="relase_date" name="relase_date" required><br><br>
-
-        <label for="artist">Artist:</label>
-        <select id="artist" name="artist_id">
-            {% for artist in artists %}
-            <option value="{{ artist[0] }}">{{ artist[1] }}</option>
-            {% endfor %}
         </select><br><br>
 
         <input type="submit" value="Submit">

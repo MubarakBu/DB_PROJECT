@@ -291,19 +291,19 @@ def insertalbum():
 
         print("Response JSON:", response.json())
 
-        if response.status_code == 201:
-            gai = "http://127.0.0.1:5000/getalbumid"
-            gaires = requests.get(gai, params={"userId": userId, "albumName": albumTitle})
-            albumId = gaires.json()[0][0]
+        # if response.status_code == 201:
+        #     gai = "http://127.0.0.1:5000/getalbumid"
+        #     gaires = requests.get(gai, params={"userId": userId, "albumName": albumTitle})
+        #     albumId = gaires.json()[0][0]
 
-            albumartist = {
-                "albumId": albumId,
-                "artistId": artist_id
-            }
+        #     albumartist = {
+        #         "albumId": albumId,
+        #         "artistId": artist_id
+        #     }
 
-            BASE = "http://127.0.0.1:5000/"
-            response2 = requests.post(BASE + "albumartists", json=albumartist)
-            print("Response JSON:", response2.json())
+        #     BASE = "http://127.0.0.1:5000/"
+        #     response2 = requests.post(BASE + "albumartists", json=albumartist)
+        #     print("Response JSON:", response2.json())
             
         # Check the response status and handle accordingly
         
