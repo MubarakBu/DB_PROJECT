@@ -55,7 +55,7 @@ class GetUserSongs(Resource):
 
         cur = mysql.connection.cursor()
         cur.execute('''SELECT s.song_id, s.song_title, 
-                    CONCAT(a.first_name, a.last_name),
+                    CONCAT(a.first_name, " ", a.last_name),
                     ab.album_title,
                     g.genre_name 
                     FROM songs s
