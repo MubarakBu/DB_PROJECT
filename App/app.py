@@ -579,7 +579,6 @@ def deletesong():
         return redirect(url_for('login'))
     
     song_id = request.args.get('songId')
-    print(song_id)
     BASE = "http://127.0.0.1:5000/"
     response = requests.delete(BASE + "deletesong", params={"songId": song_id})
     
