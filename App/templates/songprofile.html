@@ -7,15 +7,27 @@
     <style>
         .container {
             display: flex;
-            align-items: center;
+            align-items: flex-start; /* Align items to the top */
         }
         .song-pic {
             width: 200px; /* Adjust the width as needed */
             height: 200px; /* Adjust the height as needed */
             margin-right: 20px;
         }
-        .song-info {
+        .song-info-container {
             flex: 1;
+            position: relative; /* Set position to relative */
+        }
+        .edit-delete-buttons {
+            position: absolute; /* Position the buttons absolutely within the container */
+            top: 0; /* Align to the top */
+            right: 0; /* Align to the left */
+            padding: 10px; /* Add padding to create space between the buttons and the edge */
+        }
+        .edit-delete-buttons button {
+            margin-right: 10px; /* Add margin between buttons */
+        }
+        .song-info {
             background-color: #f0f0f0; /* Background color of the song info box */
             padding: 20px; /* Padding around the song info */
             border-radius: 10px; /* Rounded corners */
@@ -33,16 +45,23 @@
 <body>
     <div class="container">
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVKc_y5MmZlfuk2sOEk3r9lLCZ-Inkrj4VgiV--cgNgw&s" alt="Song Picture" class="song-pic">
-        <div class="song-info">
-            <h1 class="song-title">{{ songInfo[0][0] }}</h1>
-            <div class="song-details">
-                <p>Artist: {{ songInfo[0][1] }}</p>
-                <p>Album: {{ songInfo[0][2] }}</p>
-                <p>Genre: {{ songInfo[0][3] }}</p>
-                <p>Duration: {{ metadata[0][1] }}</p>
-                <p>Song Language: {{ metadata[0][2] }}</p>
-                <p>Release Date: {{ metadata[0][0] }}</p>
-                <!-- Add other song details here -->
+        <div class="song-info-container">
+            <div class="edit-delete-buttons">
+                <a href="/dashboard"><button>Home</button></a>
+                <a href="/editsong?songId={{ songId }}"><button>Edit</button></a>
+                <button>Delete</button>
+            </div>
+            <div class="song-info">
+                <h1 class="song-title">{{ songInfo[0][0] }}</h1>
+                <div class="song-details">
+                    <p>Artist: {{ songInfo[0][1] }}</p>
+                    <p>Album: {{ songInfo[0][2] }}</p>
+                    <p>Genre: {{ songInfo[0][3] }}</p>
+                    <p>Duration: {{ metadata[0][1] }}</p>
+                    <p>Song Language: {{ metadata[0][2] }}</p>
+                    <p>Release Date: {{ metadata[0][0] }}</p>
+                    <p>Label: {{ songInfo[0][4] }}</p>
+                </div>
             </div>
         </div>
     </div>

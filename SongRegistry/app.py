@@ -105,11 +105,12 @@ class Songs(Resource):
     def get(self):
         songId = request.args.get('songId')
         cur = mysql.connection.cursor()
-        cur.execute('''SELECT s.song_title, CONCAT(a.first_name, " ", a.last_name), ab.album_title, g.genre_name 
+        cur.execute('''SELECT s.song_title, CONCAT(a.first_name, " ", a.last_name), ab.album_title, g.genre_name, l.label_name 
                     FROM songs s JOIN song_artist sa ON s.song_id = sa.fk_song_id
                     JOIN artists a ON fk_artist_id = a.artist_id
                     JOIN albums ab ON s.fk_album_id = ab.album_id
                     JOIN genres g ON s.fk_genre_id = g.genre_id
+                    JOIN label l ON fk_label_id = l.label_id
                     WHERE song_id = %s''', (songId,))
         data = cur.fetchall()
         cur.close
@@ -133,6 +134,7 @@ class Songs(Resource):
         cur.close()
 
         return {'message': 'Song Added successfully'}, 201
+    
 
 
 class SongMetadata(Resource):
@@ -298,32 +300,6 @@ class SongArtist(Resource):
         return {'message': 'SongArtist Added successfully'}, 201
 
 
-# class AlbumArtists(Resource):
-#     def get(self):
-#         cur = mysql.connection.cursor()
-#         cur.execute('''SELECT b.album_title, CONCAT(a.first_name, " ", a.last_name) FROM albums b
-#                     JOIN album_artist aa ON b.album_id = aa.fk_album_id
-#                     JOIN artists a ON aa.fk_artist_id = a.artist_id''')
-#         data = cur.fetchall()
-#         cur.close
-#         return jsonify(data)
-    
-#     def post(self):
-
-#         data = request.json
-#         albumId = data.get('albumId')
-#         artistId = data.get('artistId')
-
-#         # Insert data into the database
-#         cur = mysql.connection.cursor()
-#         cur.execute('''INSERT INTO album_artist (fk_album_id, fk_artist_id) 
-#                        VALUES (%s, %s)''', (albumId, artistId))
-#         mysql.connection.commit()
-#         cur.close()
-
-#         return {'message': 'AlbumArtists Added successfully'}, 201
-
-
 class Copyright(Resource):
     def get(self):
         cur = mysql.connection.cursor()
@@ -446,6 +422,72 @@ class getAlbumId(Resource):
         data = cur.fetchall()
         cur.close
         return jsonify(data)
+
+
+class updateSongTitle(Resource):
+    def put(self):
+        data = request.json
+        songId = data.get('songId')
+        songTitle = data.get('songTitle')
+
+        cur = mysql.connection.cursor()
+        cur.execute('''UPDATE songs SET song_title = %s WHERE song_id = %s''', (songTitle, songId))
+        mysql.connection.commit()
+        cur.close()
+
+        return {'message': 'Song title updated successfully'}, 200
+    
+
+class updateSongGenre(Resource):
+    def put(self):
+        data = request.json
+        songId = data.get('songId')
+        genreId = data.get('genreId')
+
+        cur = mysql.connection.cursor()
+        cur.execute('''UPDATE songs SET fk_genre_id = %s WHERE song_id = %s''', (genreId, songId))
+        mysql.connection.commit()
+        cur.close()
+
+        return {'message': 'Song genre updated successfully'}, 200
+    
+
+
+class updateReleaseDate(Resource):
+    def put(self):
+        data = request.json
+        songId = data.get('songId')
+        releaseDate = data.get('releaseDate')
+
+        cur = mysql.connection.cursor()
+        cur.execute('''UPDATE song_metadata SET release_date = %s WHERE fk_song_id = %s''', (releaseDate, songId))
+        mysql.connection.commit()
+        cur.close()
+
+        return {'message': 'Release date updated successfully'}, 200
+    
+
+
+class updateSongLabel(Resource):
+    def put(self):
+        data = request.json
+        songId = data.get('songId')
+        labelId = data.get('labelId')
+
+        cur = mysql.connection.cursor()
+        cur.execute('''UPDATE songs SET fk_label_id = %s WHERE song_id = %s''', (labelId, songId))
+        mysql.connection.commit()
+        cur.close()
+
+        return {'message': 'Song label updated successfully'}, 200
+    
+
+
+
+api.add_resource(updateSongTitle, "/updatetitle")
+api.add_resource(updateSongGenre, "/updategenre")
+api.add_resource(updateReleaseDate, "/updatereleasedate")
+api.add_resource(updateSongLabel, "/updatelabel")
 
 api.add_resource(getAlbumId, "/getalbumid")
 api.add_resource(getSongId, "/getsongid")

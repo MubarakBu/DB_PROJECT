@@ -290,22 +290,6 @@ def insertalbum():
         response = requests.post(BASE + "album", json=data)
 
         print("Response JSON:", response.json())
-
-        # if response.status_code == 201:
-        #     gai = "http://127.0.0.1:5000/getalbumid"
-        #     gaires = requests.get(gai, params={"userId": userId, "albumName": albumTitle})
-        #     albumId = gaires.json()[0][0]
-
-        #     albumartist = {
-        #         "albumId": albumId,
-        #         "artistId": artist_id
-        #     }
-
-        #     BASE = "http://127.0.0.1:5000/"
-        #     response2 = requests.post(BASE + "albumartists", json=albumartist)
-        #     print("Response JSON:", response2.json())
-            
-        # Check the response status and handle accordingly
         
         return redirect(url_for('albumadded'))
 
@@ -480,7 +464,108 @@ def songprofile():
     print(response.json())
     print(response2.json())
 
-    return render_template('songprofile.html', songInfo=songInfo, metadata=metadata)
+    return render_template('songprofile.html', songInfo=songInfo, metadata=metadata, songId=song_id)
+
+
+
+############################## UPDATE SONG #####################
+
+
+
+@app.route('/editsong')
+def editsong():
+    username = session.get('username')
+    if not username:
+        # Redirect to login if the user is not logged in
+        return redirect(url_for('login'))
+    
+
+    username = session.get('username')
+    gui = "http://127.0.0.1:5000/getuserid"
+    guires = requests.get(gui, params={"username": username})
+    userId = guires.json()[0][0]
+    
+    song_id = request.args.get('songId')
+
+    BASE = "http://127.0.0.1:5000/"
+    response = requests.get(BASE + "songs", params={"songId": song_id})
+    response2 = requests.get(BASE + "songmetadata", params={"songId": song_id})
+    response3 = requests.get(BASE + "genre")
+    response4 = requests.get(BASE + "label", params={"userId": userId})
+
+    songInfo = response.json()
+    metadata = response2.json()
+    genre = response3.json()
+    label = response4.json()
+
+
+    print(label)
+
+    return render_template('editsong.html', songInfo=songInfo, metadata=metadata, genre=genre, label=label, songId=song_id)
+
+
+@app.route('/edit', methods=['GET', 'POST'])
+def updatesong():
+    if request.method == 'POST':
+        
+        song_id = request.args.get('songId')
+
+        songTitle = request.form['song_title']
+        genreId = request.form['genre_id']
+        releaseDate = request.form['release_date']
+        labelId = request.form['label_id']
+
+        titleUpdate = {
+            "songId": song_id,
+            "songTitle": songTitle
+        }
+        generUpdate = {
+            "songId": song_id,
+            "genreId": genreId
+        }
+        releaseDateUpdate = {
+            "songId": song_id,
+            "releaseDate": releaseDate
+        }
+        labelUpdate = {
+            "songId": song_id,
+            "labelId": labelId
+        }
+        
+
+        BASE = "http://127.0.0.1:5000/"
+
+        response1 = requests.put(BASE + "updatetitle", json=titleUpdate)
+        response2 = requests.put(BASE + "updategenre", json=generUpdate)
+        response3 = requests.put(BASE + "updatereleasedate", json=releaseDateUpdate)
+        response4 = requests.put(BASE + "updatelabel", json=labelUpdate)
+
+        print(response1.json())
+        print(response2.json())
+        print(response3.json())
+        print(response4.json())
+        
+        return redirect(url_for('songupdated', song_id=song_id))
+
+
+@app.route('/songupdated')
+def songupdated():
+    username = session.get('username')
+    if not username:
+        # Redirect to login if the user is not logged in
+        return redirect(url_for('login'))
+    
+    song_id = request.args.get('song_id')
+    BASE = "http://127.0.0.1:5000/"
+    response = requests.get(BASE + "songs", params={"songId": song_id})
+    response2 = requests.get(BASE + "songmetadata", params={"songId": song_id})
+
+    songInfo = response.json()
+    metadata = response2.json()
+    print(response.json())
+    print(response2.json())
+
+    return render_template('songprofile.html', songInfo=songInfo, metadata=metadata, songId=song_id)
 
 
 
