@@ -482,12 +482,24 @@ class updateSongLabel(Resource):
         return {'message': 'Song label updated successfully'}, 200
     
 
+class deleteSong(Resource):
+    def delete(self):
+        songId = request.args.get('songId')
+
+        cur = mysql.connection.cursor()
+        cur.execute('''DELETE FROM song_artist WHERE fk_song_id = %s''', (songId,))
+        cur.execute('''DELETE FROM songs WHERE song_id = %s''', (songId,))
+        mysql.connection.commit()
+        cur.close()
+
+        return {'message': f'Song with ID {songId} deleted successfully'}, 200
 
 
 api.add_resource(updateSongTitle, "/updatetitle")
 api.add_resource(updateSongGenre, "/updategenre")
 api.add_resource(updateReleaseDate, "/updatereleasedate")
 api.add_resource(updateSongLabel, "/updatelabel")
+api.add_resource(deleteSong, "/deletesong")
 
 api.add_resource(getAlbumId, "/getalbumid")
 api.add_resource(getSongId, "/getsongid")

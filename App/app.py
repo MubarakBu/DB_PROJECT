@@ -569,5 +569,30 @@ def songupdated():
 
 
 
+################################## DELETE SONG ##########################
+
+@app.route('/deletesong')
+def deletesong():
+    username = session.get('username')
+    if not username:
+        # Redirect to login if the user is not logged in
+        return redirect(url_for('login'))
+    
+    song_id = request.args.get('songId')
+    print(song_id)
+    BASE = "http://127.0.0.1:5000/"
+    response = requests.delete(BASE + "deletesong", params={"songId": song_id})
+    
+    print(response.json())
+
+    return redirect(url_for('deleted'))
+
+
+@app.route('/deleted')
+def deleted():
+    return redirect(url_for('dashboard'))
+
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='127.0.0.2')
