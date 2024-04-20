@@ -248,18 +248,7 @@ def addalbum():
     if not username:
         # Redirect to login if the user is not logged in
         return redirect(url_for('login'))
-    
-
-    gui = "http://127.0.0.1:5000/getuserid"
-    guires = requests.get(gui, params={"username": username})
-    userId = guires.json()[0][0]
-
-    BASE_ARTIST = "http://127.0.0.1:5000/artist"
-    response5 = requests.get(BASE_ARTIST, params={"userId": userId})
-    artists = response5.json()
-
-    
-    return render_template('newalbum.html', artists=artists)
+    return render_template('newalbum.html')
 
 
 @app.route('/addalbum', methods=['GET', 'POST'])
@@ -270,13 +259,9 @@ def insertalbum():
         guires = requests.get(gui, params={"username": username})
         userId = guires.json()[0][0]
 
-
-        
-
         # Extract username and password from the form
         albumTitle = request.form['album_title']
         releaseDate = request.form['relase_date']
-        artist_id = request.form['artist_id']
         user_Id = userId
        
 
