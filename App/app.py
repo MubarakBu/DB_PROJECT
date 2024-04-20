@@ -44,7 +44,8 @@ def register():
         # Print the response content for debugging
         print("Response Content:", response.status_code)
         if response.status_code == 500:
-            flash('Username is already in use. Please choose a different username.', 'error')
+            flash(
+                'Username is already in use. Please choose a different username.', 'error')
             return render_template('register.html')
         else:
             # Redirect to a success page or any other page
@@ -52,10 +53,10 @@ def register():
 
     return render_template('register.html')
 
+
 @app.route('/success')
 def success():
     return 'Registration successful! <a href="/login">Go to login page</a>'
-
 
 
 ##################################### LOGIN ###############################################
@@ -88,10 +89,10 @@ def login():
 
     return render_template('login.html')
 
+
 @app.route('/loginsuccess')
 def loginsuccess():
     return redirect(url_for('dashboard'))
-
 
 
 @app.route('/logout')
@@ -110,11 +111,11 @@ def addsong():
     if not username:
         # Redirect to login if the user is not logged in
         return redirect(url_for('login'))
-    
+
     gui = "http://127.0.0.1:5000/getuserid"
     guires = requests.get(gui, params={"username": username})
     userId = guires.json()[0][0]
-    
+
     BASE_GENRE = "http://127.0.0.1:5000/genre"
     BASE_ALBUM = "http://127.0.0.1:5000/album"
     BASE_PUBLISHER = "http://127.0.0.1:5000/publisher"
@@ -131,11 +132,9 @@ def addsong():
     publishers = response3.json()
     labels = response4.json()
     artists = response5.json()
-    
 
-    return render_template('addsong.html', genres=genres, albums=albums, publishers=publishers, 
+    return render_template('addsong.html', genres=genres, albums=albums, publishers=publishers,
                            labels=labels, artists=artists)
-
 
 
 @app.route('/insertsong', methods=['GET', 'POST'])
@@ -153,7 +152,7 @@ def insert():
         user_id = userId
         label_id = request.form['label_id']
         artist_id = request.form['artist_id']
-        ## song metadata 
+        # song metadata
         releaseDate = request.form['relase_date']
         duration = request.form['duration']
         songLanguage = request.form['song_language']
@@ -174,12 +173,13 @@ def insert():
         if response.status_code == 500:
             flash('Song title is already taken. Please choose another title.', 'error')
             return redirect(url_for('addsong'))
-        else: 
+        else:
             print("Response JSON:", response.json())
 
         if response.status_code == 201:
             gsi = "http://127.0.0.1:5000/getsongid"
-            gsires = requests.get(gsi, params={"userId": userId, "songName": song_title})
+            gsires = requests.get(
+                gsi, params={"userId": userId, "songName": song_title})
             songId = gsires.json()[0][0]
 
             metadata = {
@@ -188,7 +188,6 @@ def insert():
                 "songLanguage": songLanguage,
                 "songId": songId
             }
-
 
             songartist = {
                 "sognId": songId,
@@ -204,16 +203,15 @@ def insert():
             print("Response JSON:", response3.json())
 
         # Check the response status and handle accordingly
-        
+
         return redirect(url_for('insertsuccess'))
 
     return render_template('addsong.html')
 
+
 @app.route('/insertsuccess')
 def insertsuccess():
     return redirect(url_for('dashboard'))
-
-
 
 
 #################################### HOME #################################
@@ -225,19 +223,18 @@ def dashboard():
     if not username:
         # Redirect to login if the user is not logged in
         return redirect(url_for('login'))
-    
 
     # Query the database to retrieve the user's information and songs
     # Example: user_info = get_user_info(username)
     #          user_songs = get_user_songs(username)
     BASE = "http://127.0.0.1:5000/"
-    response = requests.get(BASE + "getusersongs", params={"username": username})
+    response = requests.get(BASE + "getusersongs",
+                            params={"username": username})
 
     songs = response.json()
 
     # Render the dashboard template with the user's information and songs
     return render_template('dashboard.html', username=username, user_songs=songs)
-
 
 
 ################### ADD ALBUM #############################
@@ -263,7 +260,6 @@ def insertalbum():
         albumTitle = request.form['album_title']
         releaseDate = request.form['relase_date']
         user_Id = userId
-       
 
         data = {
             "albumTitle": albumTitle,
@@ -275,15 +271,15 @@ def insertalbum():
         response = requests.post(BASE + "album", json=data)
 
         print("Response JSON:", response.json())
-        
+
         return redirect(url_for('albumadded'))
 
     return render_template('newalbum.html')
 
+
 @app.route('/albumadded')
 def albumadded():
     return redirect(url_for('dashboard'))
-
 
 
 ################### ADD ARTIST #############################
@@ -294,7 +290,7 @@ def addartist():
     if not username:
         # Redirect to login if the user is not logged in
         return redirect(url_for('login'))
-    
+
     return render_template('newartist.html')
 
 
@@ -309,7 +305,6 @@ def insertartist():
         firstName = request.form['frist_name']
         lastName = request.form['last_name']
         userId = userId
-       
 
         data = {
             "firstName": firstName,
@@ -323,17 +318,15 @@ def insertartist():
         print("Response JSON:", response.json())
 
         # Check the response status and handle accordingly
-        
+
         return redirect(url_for('artistadded'))
 
     return render_template('newartist.html')
 
+
 @app.route('/artistadded')
 def artistadded():
     return redirect(url_for('dashboard'))
-
-
-
 
 
 ################### ADD PUBLISHER #############################
@@ -344,7 +337,7 @@ def addpublisher():
     if not username:
         # Redirect to login if the user is not logged in
         return redirect(url_for('login'))
-    
+
     return render_template('newpublisher.html')
 
 
@@ -359,7 +352,6 @@ def insertpublisher():
         firstName = request.form['frist_name']
         lastName = request.form['last_name']
         userId = userId
-       
 
         data = {
             "firstName": firstName,
@@ -373,10 +365,11 @@ def insertpublisher():
         print("Response JSON:", response.json())
 
         # Check the response status and handle accordingly
-        
+
         return redirect(url_for('publisheradded'))
 
     return render_template('newpublisher.html')
+
 
 @app.route('/publisheradded')
 def publisheradded():
@@ -391,7 +384,7 @@ def addlabel():
     if not username:
         # Redirect to login if the user is not logged in
         return redirect(url_for('login'))
-    
+
     return render_template('newlabel.html')
 
 
@@ -405,7 +398,6 @@ def insertlabel():
         # Extract username and password from the form
         labelName = request.form['label_name']
         userId = userId
-       
 
         data = {
             "labelName": labelName,
@@ -418,15 +410,15 @@ def insertlabel():
         print("Response JSON:", response.json())
 
         # Check the response status and handle accordingly
-        
+
         return redirect(url_for('labeladded'))
 
     return render_template('newlabel.html')
 
+
 @app.route('/labeladded')
 def labeladded():
     return redirect(url_for('dashboard'))
-
 
 
 ################################## SONG PROFILE #####################################
@@ -438,7 +430,7 @@ def songprofile():
     if not username:
         # Redirect to login if the user is not logged in
         return redirect(url_for('login'))
-    
+
     song_id = request.args.get('song_id')
     BASE = "http://127.0.0.1:5000/"
     response = requests.get(BASE + "songs", params={"songId": song_id})
@@ -452,9 +444,7 @@ def songprofile():
     return render_template('songprofile.html', songInfo=songInfo, metadata=metadata, songId=song_id)
 
 
-
 ############################## UPDATE SONG #####################
-
 
 
 @app.route('/editsong')
@@ -463,13 +453,12 @@ def editsong():
     if not username:
         # Redirect to login if the user is not logged in
         return redirect(url_for('login'))
-    
 
     username = session.get('username')
     gui = "http://127.0.0.1:5000/getuserid"
     guires = requests.get(gui, params={"username": username})
     userId = guires.json()[0][0]
-    
+
     song_id = request.args.get('songId')
 
     BASE = "http://127.0.0.1:5000/"
@@ -483,7 +472,6 @@ def editsong():
     genre = response3.json()
     label = response4.json()
 
-
     print(label)
 
     return render_template('editsong.html', songInfo=songInfo, metadata=metadata, genre=genre, label=label, songId=song_id)
@@ -492,7 +480,7 @@ def editsong():
 @app.route('/edit', methods=['GET', 'POST'])
 def updatesong():
     if request.method == 'POST':
-        
+
         song_id = request.args.get('songId')
 
         songTitle = request.form['song_title']
@@ -516,20 +504,20 @@ def updatesong():
             "songId": song_id,
             "labelId": labelId
         }
-        
 
         BASE = "http://127.0.0.1:5000/"
 
         response1 = requests.put(BASE + "updatetitle", json=titleUpdate)
         response2 = requests.put(BASE + "updategenre", json=generUpdate)
-        response3 = requests.put(BASE + "updatereleasedate", json=releaseDateUpdate)
+        response3 = requests.put(
+            BASE + "updatereleasedate", json=releaseDateUpdate)
         response4 = requests.put(BASE + "updatelabel", json=labelUpdate)
 
         print(response1.json())
         print(response2.json())
         print(response3.json())
         print(response4.json())
-        
+
         return redirect(url_for('songupdated', song_id=song_id))
 
 
@@ -539,7 +527,7 @@ def songupdated():
     if not username:
         # Redirect to login if the user is not logged in
         return redirect(url_for('login'))
-    
+
     song_id = request.args.get('song_id')
     BASE = "http://127.0.0.1:5000/"
     response = requests.get(BASE + "songs", params={"songId": song_id})
@@ -553,7 +541,6 @@ def songupdated():
     return render_template('songprofile.html', songInfo=songInfo, metadata=metadata, songId=song_id)
 
 
-
 ################################## DELETE SONG ##########################
 
 @app.route('/deletesong')
@@ -562,11 +549,11 @@ def deletesong():
     if not username:
         # Redirect to login if the user is not logged in
         return redirect(url_for('login'))
-    
+
     song_id = request.args.get('songId')
     BASE = "http://127.0.0.1:5000/"
     response = requests.delete(BASE + "deletesong", params={"songId": song_id})
-    
+
     print(response.json())
 
     return redirect(url_for('deleted'))
@@ -577,6 +564,5 @@ def deleted():
     return redirect(url_for('dashboard'))
 
 
-
 if __name__ == '__main__':
-    app.run(debug=True, host='127.0.0.2')
+    app.run(debug=True, host='::1')
