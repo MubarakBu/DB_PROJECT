@@ -388,12 +388,12 @@ class Payments(Resource):
         amount = data.get('amount')
         songId = data.get('songId')
         payment_method = data.get('payment_method')
-        payment_date = data.get('payment_date')
+        # payment_date = data.get('payment_date')
         # Insert data into the payment table
         cur = mysql.connection.cursor()
-        cur.execute('''CALL PaymentTransaction(%s,%s,%s,%s)''',
-                    (amount, payment_method, payment_date, songId))
-        mysql.connection.commit()
+        cur.execute('''CALL InsertPaymentThenRegister(%s,%s,%s)''',
+                    (amount, payment_method, songId))
+        # mysql.connection.commit()
         cur.close()
 
         return {'message': 'Payment successfully made'}, 200

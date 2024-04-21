@@ -331,18 +331,17 @@ def paynow():
     return render_template('payment.html', song_id=song_id, songInfo=songInfo)
 
 
-@app.route('/payment_process', methods=['POST', 'GET'])
+@app.route('/payment_process', methods=['GET', 'POST'])
 def payment_process():
     if request.method == 'POST':
         song_id = request.args.get('songId')
         amount = 150.00
         payment_method = request.form.get('payment_method')
-        payment_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        # payment_date = datetime.datetime.now().strftime('%Y-%m-%d')
         details = {
             "amount": amount,
             "songId": song_id,
-            "payment_method": payment_method,
-            "payment_date": payment_date
+            "payment_method": payment_method
         }
         BASE = "http://127.0.0.1:5000/"
         response = requests.post(BASE + 'payments', json=details)
