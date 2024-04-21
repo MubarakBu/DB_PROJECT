@@ -123,10 +123,6 @@ class deleteSong(Resource):
 Here's the documentation that demonstrates how the frontend interacts with the Flask-RESTful backend using HTTP requests. 
 
 
-# Flask-RESTful Frontend Interaction
-
-This example demonstrates how the frontend uses HTTP requests to interact with the backend API endpoints implemented with Flask-RESTful. The backend uses MySQL to perform CRUD (Create, Read, Update, Delete) operations on data such as user songs, user information, and song details.
-
 ### API Base URL
 The base URL for the Flask-RESTful backend is: `http://127.0.0.1:5000/`
 
