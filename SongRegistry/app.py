@@ -9,7 +9,7 @@ app = Flask(__name__)
 api = Api(app)
 
 app.config.from_object(Config)
-## MySQL configuration 
+# MySQL configuration
 app.config['MYSQL_HOST'] = app.config['MYSQL_HOST']
 app.config['MYSQL_USER'] = app.config['MYSQL_USER']
 app.config['MYSQL_PASSWORD'] = app.config['MYSQL_PASSWORD']
@@ -21,33 +21,34 @@ mysql = MySQL(app)
 class getUserId(Resource):
     def get(self):
         username = request.args.get('username')
-        
+
         cur = mysql.connection.cursor()
-        cur.execute('SELECT user_id FROM users WHERE username = %s', (username,))
+        cur.execute(
+            'SELECT user_id FROM users WHERE username = %s', (username,))
         user = cur.fetchall()
         cur.close()
 
         return jsonify(user)
 
 
-
 class UserVaildate(Resource):
     def post(self):
         data = request.json
-        
+
         username = data.get('username')
         password = data.get('password')
-        
+
         cur = mysql.connection.cursor()
-        cur.execute('SELECT * FROM users WHERE username = %s AND pass = %s', (username, password))
+        cur.execute(
+            'SELECT * FROM users WHERE username = %s AND pass = %s', (username, password))
         user = cur.fetchone()
         cur.close()
-        
+
         if user:
             return {'message': 'User authenticated successfully'}, 200
         else:
             return {'error': 'Invalid username or password'}, 401
-        
+
 
 class GetUserSongs(Resource):
     def get(self):
@@ -67,10 +68,10 @@ class GetUserSongs(Resource):
                     WHERE u.username = %s''', (username,))
         data = cur.fetchall()
         cur.close()
-        
+
         return jsonify(data)
 
-    
+
 class Users(Resource):
     def get(self):
         cur = mysql.connection.cursor()
@@ -78,8 +79,6 @@ class Users(Resource):
         data = cur.fetchall()
         cur.close
         return jsonify(data)
-        
-    
 
     def post(self):
 
@@ -115,9 +114,9 @@ class Songs(Resource):
         data = cur.fetchall()
         cur.close
         return jsonify(data)
-    
+
     def post(self):
-        
+
         data = request.json
         songTitle = data.get('songTitle')
         genreId = data.get('genreId')
@@ -134,7 +133,6 @@ class Songs(Resource):
         cur.close()
 
         return {'message': 'Song Added successfully'}, 201
-    
 
 
 class SongMetadata(Resource):
@@ -149,11 +147,11 @@ class SongMetadata(Resource):
         formatted_data = []
         for row in data:
             formatted_row = list(row)
-            formatted_row[1] = str(formatted_row[1])  # Convert timedelta to string
+            # Convert timedelta to string
+            formatted_row[1] = str(formatted_row[1])
             formatted_data.append(formatted_row)
 
         return jsonify(formatted_data)
-    
 
     def post(self):
 
@@ -181,7 +179,7 @@ class Albums(Resource):
         data = cur.fetchall()
         cur.close
         return jsonify(data)
-    
+
     def post(self):
 
         data = request.json
@@ -203,11 +201,12 @@ class Artists(Resource):
     def get(self):
         userId = request.args.get('userId')
         cur = mysql.connection.cursor()
-        cur.execute('''SELECT * FROM artists WHERE fk_user_id = %s''', (userId,))
+        cur.execute(
+            '''SELECT * FROM artists WHERE fk_user_id = %s''', (userId,))
         data = cur.fetchall()
         cur.close
         return jsonify(data)
-    
+
     def post(self):
 
         data = request.json
@@ -229,11 +228,12 @@ class Publisher(Resource):
     def get(self):
         userId = request.args.get('userId')
         cur = mysql.connection.cursor()
-        cur.execute('''SELECT * FROM publisher WHERE fk_user_id = %s''', (userId,))
+        cur.execute(
+            '''SELECT * FROM publisher WHERE fk_user_id = %s''', (userId,))
         data = cur.fetchall()
         cur.close
         return jsonify(data)
-    
+
     def post(self):
 
         data = request.json
@@ -258,7 +258,7 @@ class Genre(Resource):
         data = cur.fetchall()
         cur.close
         return jsonify(data)
-    
+
     def post(self):
 
         data = request.json
@@ -283,7 +283,7 @@ class SongArtist(Resource):
         data = cur.fetchall()
         cur.close
         return jsonify(data)
-    
+
     def post(self):
 
         data = request.json
@@ -307,7 +307,7 @@ class Copyright(Resource):
         data = cur.fetchall()
         cur.close
         return jsonify(data)
-    
+
     def post(self):
 
         data = request.json
@@ -333,9 +333,8 @@ class Label(Resource):
         data = cur.fetchall()
         cur.close
         return jsonify(data)
-    
-    def post(self):
 
+    def post(self):
         data = request.json
         labelName = data.get('labelName')
         userId = data.get('userId')
@@ -347,7 +346,7 @@ class Label(Resource):
         mysql.connection.commit()
         cur.close()
 
-        return {'message': 'Label Added successfully'}, 201
+        return {'message': 'Label Added successfully'}, 200
 
 
 class Registrations(Resource):
@@ -357,7 +356,7 @@ class Registrations(Resource):
         data = cur.fetchall()
         cur.close
         return jsonify(data)
-    
+
     def post(self):
 
         data = request.json
@@ -371,33 +370,33 @@ class Registrations(Resource):
         mysql.connection.commit()
         cur.close()
 
-        return {'message': 'Registration Added successfully'}, 201
+        return {'message': 'Registration Added successfully'}, 200
 
 
 class Payments(Resource):
     def get(self):
+        song_id = request.args.get('song_id')
         cur = mysql.connection.cursor()
-        cur.execute('''SELECT * FROM payments''')
+        cur.execute(
+            '''SELECT * FROM payments WHERE song_id = %s''', (song_id,))
         data = cur.fetchall()
         cur.close
         return jsonify(data)
-    
-    def post(self):
 
+    def post(self):
         data = request.json
         amount = data.get('amount')
-        paymentMethod = data.get('paymentMethod')
-        paymentDate = data.get('paymentDate')
         songId = data.get('songId')
-
-        # Insert data into the database
+        payment_method = data.get('payment_method')
+        payment_date = data.get('payment_date')
+        # Insert data into the payment table
         cur = mysql.connection.cursor()
-        cur.execute('''INSERT INTO label (amount, payment_method, payment_date, song_id) 
-                       VALUES (%s)''', (amount, paymentMethod, paymentDate, songId))
+        cur.execute('''CALL PaymentTransaction(%s,%s,%s,%s)''',
+                    (amount, payment_method, payment_date, songId))
         mysql.connection.commit()
         cur.close()
 
-        return {'message': 'Label Added successfully'}, 201
+        return {'message': 'Payment successfully made'}, 200
 
 
 class getSongId(Resource):
@@ -406,7 +405,7 @@ class getSongId(Resource):
         songName = request.args.get('songName')
         cur = mysql.connection.cursor()
         cur.execute('''SELECT song_id FROM songs 
-                    WHERE fk_user_id = %s AND song_title = %s''', (userId,songName,))
+                    WHERE fk_user_id = %s AND song_title = %s''', (userId, songName,))
         data = cur.fetchall()
         cur.close
         return jsonify(data)
@@ -418,7 +417,7 @@ class getAlbumId(Resource):
         albumName = request.args.get('albumName')
         cur = mysql.connection.cursor()
         cur.execute('''SELECT album_id FROM albums 
-                    WHERE user_id = %s AND album_title = %s''', (userId,albumName,))
+                    WHERE user_id = %s AND album_title = %s''', (userId, albumName,))
         data = cur.fetchall()
         cur.close
         return jsonify(data)
@@ -431,12 +430,13 @@ class updateSongTitle(Resource):
         songTitle = data.get('songTitle')
 
         cur = mysql.connection.cursor()
-        cur.execute('''UPDATE songs SET song_title = %s WHERE song_id = %s''', (songTitle, songId))
+        cur.execute(
+            '''UPDATE songs SET song_title = %s WHERE song_id = %s''', (songTitle, songId))
         mysql.connection.commit()
         cur.close()
 
         return {'message': 'Song title updated successfully'}, 200
-    
+
 
 class updateSongGenre(Resource):
     def put(self):
@@ -445,12 +445,12 @@ class updateSongGenre(Resource):
         genreId = data.get('genreId')
 
         cur = mysql.connection.cursor()
-        cur.execute('''UPDATE songs SET fk_genre_id = %s WHERE song_id = %s''', (genreId, songId))
+        cur.execute(
+            '''UPDATE songs SET fk_genre_id = %s WHERE song_id = %s''', (genreId, songId))
         mysql.connection.commit()
         cur.close()
 
         return {'message': 'Song genre updated successfully'}, 200
-    
 
 
 class updateReleaseDate(Resource):
@@ -460,12 +460,12 @@ class updateReleaseDate(Resource):
         releaseDate = data.get('releaseDate')
 
         cur = mysql.connection.cursor()
-        cur.execute('''UPDATE song_metadata SET release_date = %s WHERE fk_song_id = %s''', (releaseDate, songId))
+        cur.execute(
+            '''UPDATE song_metadata SET release_date = %s WHERE fk_song_id = %s''', (releaseDate, songId))
         mysql.connection.commit()
         cur.close()
 
         return {'message': 'Release date updated successfully'}, 200
-    
 
 
 class updateSongLabel(Resource):
@@ -475,19 +475,21 @@ class updateSongLabel(Resource):
         labelId = data.get('labelId')
 
         cur = mysql.connection.cursor()
-        cur.execute('''UPDATE songs SET fk_label_id = %s WHERE song_id = %s''', (labelId, songId))
+        cur.execute(
+            '''UPDATE songs SET fk_label_id = %s WHERE song_id = %s''', (labelId, songId))
         mysql.connection.commit()
         cur.close()
 
         return {'message': 'Song label updated successfully'}, 200
-    
+
 
 class deleteSong(Resource):
     def delete(self):
         songId = request.args.get('songId')
 
         cur = mysql.connection.cursor()
-        cur.execute('''DELETE FROM song_artist WHERE fk_song_id = %s''', (songId,))
+        cur.execute(
+            '''DELETE FROM song_artist WHERE fk_song_id = %s''', (songId,))
         cur.execute('''DELETE FROM songs WHERE song_id = %s''', (songId,))
         mysql.connection.commit()
         cur.close()
@@ -500,7 +502,6 @@ api.add_resource(updateSongGenre, "/updategenre")
 api.add_resource(updateReleaseDate, "/updatereleasedate")
 api.add_resource(updateSongLabel, "/updatelabel")
 api.add_resource(deleteSong, "/deletesong")
-
 api.add_resource(getAlbumId, "/getalbumid")
 api.add_resource(getSongId, "/getsongid")
 api.add_resource(Users, "/users")

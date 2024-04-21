@@ -1,17 +1,124 @@
+import datetime
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import requests
-
-
+from flask_sqlalchemy import SQLAlchemy
+import mysql.connector
+from sqlalchemy import func, desc, or_
+from datetime import timedelta
 app = Flask(__name__)
 app.secret_key = 'r123q123'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://mfb56:InfSci2710_4612667@164.90.137.194/mfb56'
+
+db = SQLAlchemy(app)
+
+
+class Genres(db.Model):
+    genre_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    genre_name = db.Column(db.String(255), nullable=False)
+
+
+class Album(db.Model):
+    album_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    album_title = db.Column(db.String(255), nullable=False)
+    release_date = db.Column(db.Date, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        'users.user_id'), nullable=False)
+
+
+class Artist(db.Model):
+    artist_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    first_name = db.Column(db.String(255), nullable=False)
+    last_name = db.Column(db.String(255), nullable=False)
+    fk_user_id = db.Column(db.Integer, db.ForeignKey(
+        'users.user_id'), nullable=False)
+
+
+# class Song_Artist(db.Model):
+#     fk_artist_id = db.Column(db.Integer, db.ForeignKey(
+#         'artist.artist_id'), nullable=False)
+#     song_id_fk = db.Column(db.Integer, db.ForeignKey(
+#         'songs.song_id'), nullable=False)
+
+
+class Publisher(db.Model):
+    publisher_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    first_name = db.Column(db.String(20), nullable=False)
+    last_name = db.Column(db.String(20), nullable=False)
+    fk_user_id = db.Column(db.Integer, db.ForeignKey(
+        'users.user_id'), nullable=False)
+
+
+class Users(db.Model):
+    song_writer_id = db.Column(
+        db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(30), nullable=False)
+    f_name = db.Column(db.String(30), nullable=False)
+    l_name = db.Column(db.String(30), nullable=False)
+    email = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(20), nullable=False)
+
+
+class Payments(db.Model):
+    payment_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    amount = db.Column(db.Float, nullable=False)
+    payment_date = db.Column(db.Date, nullable=False)
+    payment_method = db.Column(db.String(20))
+    song_id = db.Column(db.Integer, db.ForeignKey(
+        'songs.song_id'), nullable=False)
+
+
+# class Registrations(db.Model):
+#     register_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     song_id_fk = db.Column(db.Integer, db.ForeignKey(
+#         'songs.song_id'), nullable=False)
+#     registration_date = db.Column(db.Date, nullable=False)
+
+
+class Songs(db.Model):
+    song_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    song_title = db.Column(db.String(255))
+    fk_album_id = db.Column(db.Integer, db.ForeignKey('album.album_id'))
+    fk_artist_id = db.Column(db.Integer, db.ForeignKey(
+        'artist.artist_id'), nullable=False)
+    fk_genre_id = db.Column(db.Integer, db.ForeignKey('genres.genre_id'))
+    publisher_id_fk = db.Column(
+        db.Integer, db.ForeignKey('publisher.publisher_id'))
+    song_writer_id_fk = db.Column(db.Integer, db.ForeignKey(
+        'song_writers.song_writer_id'), nullable=False)
+
+
+class CopyrightInfo(db.Model):
+    copyright_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    copyright_holder = db.Column(db.Text, nullable=False)
+    fk_song_id = db.Column(db.Integer, db.ForeignKey(
+        'songs.song_id'), nullable=False)
+
+
+class Label(db.Model):
+    label_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    label_name = db.Column(db.String(20), nullable=False)
+    fk_user_id = db.Column(db.Integer, db.ForeignKey(
+        'users.user_id'), nullable=False)
+
+
+class SongMetadata(db.Model):
+    metadata_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    release_date = db.Column(db.DateTime, nullable=False)
+    duration = db.Column(db.Time, nullable=False)
+    language = db.Column(db.String(20), nullable=False)
+    fk_song_id = db.Column(db.Integer, db.ForeignKey(
+        'songs.song_id'), nullable=False)
+
+################################## HOME/LOGIN ####################################
 
 
 @app.route('/')
 def login_form():
     return render_template('login.html')
 
-
 ############################################# REGISTER ###########################################
+
 
 @app.route('/register')
 def register_form():
@@ -132,7 +239,6 @@ def addsong():
     publishers = response3.json()
     labels = response4.json()
     artists = response5.json()
-
     return render_template('addsong.html', genres=genres, albums=albums, publishers=publishers,
                            labels=labels, artists=artists)
 
@@ -211,6 +317,37 @@ def insert():
 
 @app.route('/insertsuccess')
 def insertsuccess():
+    return redirect(url_for('dashboard'))
+
+####################### Payments ###############################
+
+
+@app.route('/paynow')
+def paynow():
+    song_id = request.args.get('songId')
+    BASE = "http://127.0.0.1:5000/"
+    response = requests.get(BASE + "songs", params={"songId": song_id})
+    songInfo = response.json()
+    return render_template('payment.html', song_id=song_id, songInfo=songInfo)
+
+
+@app.route('/payment_process', methods=['POST', 'GET'])
+def payment_process():
+    if request.method == 'POST':
+        song_id = request.args.get('songId')
+        amount = 150.00
+        payment_method = request.form.get('payment_method')
+        payment_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        details = {
+            "amount": amount,
+            "songId": song_id,
+            "payment_method": payment_method,
+            "payment_date": payment_date
+        }
+        BASE = "http://127.0.0.1:5000/"
+        response = requests.post(BASE + 'payments', json=details)
+        print(response)
+        print(details)
     return redirect(url_for('dashboard'))
 
 
@@ -432,6 +569,8 @@ def songprofile():
         return redirect(url_for('login'))
 
     song_id = request.args.get('song_id')
+    checkRegisteredSong = Payments.query.filter(
+        Payments.song_id == song_id).first()
     BASE = "http://127.0.0.1:5000/"
     response = requests.get(BASE + "songs", params={"songId": song_id})
     response2 = requests.get(BASE + "songmetadata", params={"songId": song_id})
@@ -441,7 +580,12 @@ def songprofile():
     print(response.json())
     print(response2.json())
 
-    return render_template('songprofile.html', songInfo=songInfo, metadata=metadata, songId=song_id)
+    if checkRegisteredSong is not None:
+        print(checkRegisteredSong.payment_id)
+    else:
+        print("checkRegisteredSong is None")
+
+    return render_template('songprofile.html', songInfo=songInfo, metadata=metadata, songId=song_id, checkRegisteredSong=checkRegisteredSong)
 
 
 ############################## UPDATE SONG #####################

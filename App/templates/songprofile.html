@@ -54,11 +54,20 @@
     <div class="container">
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVKc_y5MmZlfuk2sOEk3r9lLCZ-Inkrj4VgiV--cgNgw&s" alt="Song Picture" class="song-pic">
         <div class="song-info-container">
+            {% if checkRegisteredSong %}
             <div class="edit-delete-buttons">
                 <a href="/dashboard"><button>Home</button></a>
                 <a href="/editsong?songId={{ songId }}"><button>Edit</button></a>
                 <button onclick="confirmDelete('{{ songId }}')">Delete</button>
             </div>
+            {% else %}
+            <div class="edit-delete-buttons">
+                <a href="/dashboard"><button>Home</button></a>
+                <a href="/editsong?songId={{ songId }}"><button>Edit</button></a>
+                <button onclick="confirmDelete('{{ songId }}')">Delete</button>
+                <a href="/paynow?songId={{ songId }}"><button>Register Song</button></a>
+            </div>
+            {% endif %}
             <div class="song-info">
                 <h1 class="song-title">{{ songInfo[0][0] }}</h1>
                 <div class="song-details">

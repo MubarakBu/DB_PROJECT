@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Form</title>
+    <style>
+        /* Basic styling for the form */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f2f2f2;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px; /* Adjust the width of the form */
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"], input[type="date"], select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: black;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #333;
+        }
+        .song-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <form action="/payment_process?songId={{ song_id }}" method="post">
+        <div class="form-group">
+            <h2 class="song-title">{{ songInfo[0][0] }}</h2>
+        </div>
+        <div class="form-group">
+            <label for="amount">Amount</label>
+            <input type="float" id="amount" name="amount" placeholder="$ 150" value="150.00" disabled>
+        </div>
+        <div class="form-group">
+            <label for="payment_method">Payment Method:</label>
+            <select id="payment_method" name="payment_method" required>
+                <option value="">Select Payment Method</option>
+                <option value="Visa">Visa</option>
+                <option value="Debit">Debit</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="card_number">Card Number:</label>
+            <input type="text" id="card_number" name="card_number" placeholder="Enter card number" required>
+        </div>
+        <div class="form-group">
+            <label for="date_on_card">Date on Card:</label>
+            <input type="date" id="date_on_card" name="date_on_card" required>
+        </div>
+        <div class="form-group">
+            <label for="security_code">Security Code:</label>
+            <input type="number" id="security_code" name="security_code" placeholder="Enter security code" required>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Pay Now">
+        </div>
+    </form>
+</body>
+</html>

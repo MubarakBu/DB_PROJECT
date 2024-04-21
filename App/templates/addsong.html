@@ -12,68 +12,74 @@
             <div class="alert alert-{{ category }}">
                 {{ message }}
             </div>
-            {% endfor %}
-        {% endif %}
+        {% endfor %}
+    {% endif %}
     {% endwith %}
     <h1>Insert New Song</h1>
     <form action="/insertsong" method="post">
-        <!-- First section: Song Details -->
-        <label for="song_title">Song Title:</label>
-        <input type="text" id="song_title" name="song_title" required><br><br>
+        <!-- Song Details Section -->
+        <section>
+            <h2>Song Details</h2>
+            <label for="song_title">Song Title:</label>
+            <input type="text" id="song_title" name="song_title" required><br><br>
 
-        <label for="genre">Genre:</label>
-        <select id="genre" name="genre_id">
-            {% for genre in genres %}
-            <option value="{{ genre[0] }}">{{ genre[1] }}</option>
-            {% endfor %}
-        </select><br><br>
+            <label for="genre">Genre:</label>
+            <select id="genre" name="genre_id">
+                {% for genre in genres %}
+                <option value="{{ genre[0] }}">{{ genre[1] }}</option>
+                {% endfor %}
+            </select><br><br>
 
-        <label for="album">Album:</label>
-        <select id="album" name="album_id">
-            {% for album in albums %}
-            <option value="{{ album[0] }}">{{ album[1] }}</option>
-            {% endfor %}
-        </select><br><br>
+            <label for="album">Album:</label>
+            <select id="album" name="album_id">
+                {% for album in albums %}
+                <option value="{{ album[0] }}">{{ album[1] }}</option>
+                {% endfor %}
+            </select><br><br>
 
-        <label for="publisher">Publisher:</label>
-        <select id="publisher" name="publisher_id">
-            {% for publisher in publishers %}
-            <option value="{{ publisher[0] }}">{{ publisher[1] }}</option>
-            {% endfor %}
-        </select><br><br>
+            <label for="publisher">Publisher:</label>
+            <select id="publisher" name="publisher_id">
+                {% for publisher in publishers %}
+                <option value="{{ publisher[0] }}">{{ publisher[1] }}</option>
+                {% endfor %}
+            </select><br><br>
 
-        <label for="label">Label:</label>
-        <select id="label" name="label_id">
-            {% for label in labels %}
-            <option value="{{ label[0] }}">{{ label[1] }}</option>
-            {% endfor %}
-        </select><br><br>
+            <label for="label">Label:</label>
+            <select id="label" name="label_id">
+                {% for label in labels %}
+                <option value="{{ label[0] }}">{{ label[1] }}</option>
+                {% endfor %}
+            </select><br><br>
 
-        <label for="artist">Artist:</label>
-        <select id="artist" name="artist_id">
-            {% for artist in artists %}
-            <option value="{{ artist[0] }}">{{ artist[1] }}</option>
-            {% endfor %}
-        </select><br><br>
+            <label for="artist">Artist:</label>
+            <select id="artist" name="artist_id">
+                {% for artist in artists %}
+                <option value="{{ artist[0] }}">{{ artist[1] }}</option>
+                {% endfor %}
+            </select><br><br>
+        </section>
 
-        <!-- Second section: Song Information -->
-        <h2>Song Information</h2>
-        <label for="relase_date">Relase Date:</label>
-        <input type="date" id="relase_date" name="relase_date" required><br><br>
+        <!-- Song Information Section -->
+        <section>
+            <h2>Song Information</h2>
+            <label for="relase_date">Relase Date:</label>
+            <input type="date" id="relase_date" name="relase_date" required><br><br>
 
-        <label for="duration">Duration (MM:SS):</label>
-        <input type="text" id="duration" name="duration" pattern="[0-5][0-9]:[0-5][0-9]"required><br><br>
+            <label for="duration">Duration (MM:SS):</label>
+            <input type="text" id="duration" name="duration" pattern="[0-5][0-9]:[0-5][0-9]" required><br><br>
 
-        <label for="song_language">Language:</label>
-        <select id="song_language" name="song_language">
-            <option value="english">English</option>
-            <option value="other">Other</option>
-        </select><br><br>
+            <label for="song_language">Language:</label>
+            <select id="song_language" name="song_language">
+                <option value="english">English</option>
+                <option value="other">Other</option>
+            </select><br><br>
 
-        <label for="picture">Select Picture:</label>
-        <input type="file" id="picture" name="picture" accept="image/*" ><br><br>
+            <label for="picture">Select Picture:</label>
+            <input type="file" id="picture" name="picture" accept="image/*" ><br><br>
+        </section>
+
+        <!-- Submit Button -->
         <input type="submit" value="Upload">
-
         <input type="submit" value="Submit">
     </form>
 </body>
