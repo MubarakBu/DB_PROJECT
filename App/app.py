@@ -360,12 +360,13 @@ def dashboard():
         # Redirect to login if the user is not logged in
         return redirect(url_for('login'))
 
-    # Query the database to retrieve the user's information and songs
-    # Example: user_info = get_user_info(username)
-    #          user_songs = get_user_songs(username)
+    gui = "http://127.0.0.1:5000/getuserid"
+    guires = requests.get(gui, params={"username": username})
+    userId = guires.json()[0][0]
+    
     BASE = "http://127.0.0.1:5000/"
     response = requests.get(BASE + "getusersongs",
-                            params={"username": username})
+                            params={"userId": userId})
 
     songs = response.json()
 

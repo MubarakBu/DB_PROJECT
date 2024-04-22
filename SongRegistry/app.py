@@ -52,10 +52,10 @@ class UserVaildate(Resource):
 
 class GetUserSongs(Resource):
     def get(self):
-        username = request.args.get('username')
+        userId = request.args.get('userId')
 
         cur = mysql.connection.cursor()
-        cur.execute('''SELECT * FROM dashboard_view WHERE username = %s''', (username,))
+        cur.execute('''SELECT * FROM dashboard_view WHERE user_id = %s''', (userId,))
         data = cur.fetchall()
         cur.close()
 
