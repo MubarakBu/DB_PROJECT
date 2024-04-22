@@ -44,40 +44,47 @@ SongRegistry is a dedicated platform for songwriters and song owners to easily r
 
 ![Logo](https://github.com/MubarakBu/DB_PROJECT/blob/main/db_project.png?raw=true)
 
-## Installation
+## Installation and running application
 
-1. Clone the repository
-2. Navigate to the project directory
+1. Unzip attached zip file and open two new terminals.
+2. Navigate to the project directories (App and SongRegistry inside DB_PROJECT folder)
+   eg. on first terminal
 
 ```
 cd SongRegistry
 ```
 
-3. Create a Virtual Environment:
+And on second terminal:
+
+```
+cd App
+```
+
+3. In each directory, create a Virtual Environment:
 
 ```
 python -m venv env
 ```
 
-4. Activate The Virtual Environment:
+4. Activate The Virtual Environments:
 
 ```
 .\env\Scripts\activate
 ```
 
-or
+on Macbooks use:
 
 ```
 source <venv_path>/bin/activate
 ```
 
-5. Install Required Packages:
+5. Install Required Packages for each apps (each directory contains the requirement.txt file):
 
 ```
-pip install -r requirements.txt
+pip install -r requirement.txt
 ```
 
-6. Create a Config File:
+6. Create a Config File (Lecturer can skip this step we have attached this file):
 
 • Create a new file named config.py in the SongRegistry directory.
 
@@ -86,3 +93,17 @@ pip install -r requirements.txt
 • Replace the placeholder values with your actual configuration information.
 
 7. Import The SQL Dump file to your MySQL
+
+## running application
+
+1. After installation, run backend first (App.py in SongRegistry directory) with:
+
+```
+python3 app.py
+```
+
+before running frontend (App.py in App directory) with same command.
+
+2. copy url and paste address in frontend terminal in browser. Frontend runs on localhost ipv6 and ipv4 for backend.
+
+## App functionality
