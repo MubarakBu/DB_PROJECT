@@ -71,42 +71,46 @@
     </style>
 </head>
 <body>
-    
     <div class="container">
         <a href="logout">Log out</a>
         <h1>Welcome, {{ username }}</h1>
-
+    
+        <h2>Add New:</h2>
         <div class="links">
-            <a href="/addsong">Add New Song</a>
             <a href="/album">Create New Album</a>
             <a href="/artist">Add New Artist</a>
             <a href="/publisher">Add New Publisher</a>
             <a href="/label">Add New Label</a>
         </div>
-
+    
+        <h2>Add New Song:</h2>
+        <div class="links">
+            <a href="/addsong">Add New Song</a>
+        </div>
+    
         <h2>Your Songs:</h2>
-
-        
+    
         <table>
-    <thead>
-        <tr>
-            <th>Song</th>
-            <th>Artist</th>
-            <th>Album</th>
-            <th>Genre</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for song_info in user_songs %}
-            <tr>
-                <td><a href="/songprofile?song_id={{ song_info[0] }}">{{ song_info[1] }}</a></td> <!-- Song Name -->
-                <td>{{ song_info[2] }}</td> <!-- Artist Name -->
-                <td>{{ song_info[3] }}</td> <!-- Album Name -->
-                <td>{{ song_info[4] }}</td> <!-- Genre -->
-            </tr>
-        {% endfor %}
-    </tbody>
-    </table>
+            <thead>
+                <tr>
+                    <th>Song</th>
+                    <th>Artist</th>
+                    <th>Album</th>
+                    <th>Genre</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for song_info in user_songs %}
+                    <tr>
+                        <td><a href="/songprofile?song_id={{ song_info[0] }}">{{ song_info[1] }}</a></td> <!-- Song Name -->
+                        <td>{{ song_info[2] }}</td> <!-- Artist Name -->
+                        <td>{{ song_info[3] }}</td> <!-- Album Name -->
+                        <td>{{ song_info[4] }}</td> <!-- Genre -->
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+    
 </body>
 </html>
