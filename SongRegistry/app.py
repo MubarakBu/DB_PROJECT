@@ -55,22 +55,30 @@ class GetUserSongs(Resource):
         username = request.args.get('username')
 
         cur = mysql.connection.cursor()
-        cur.execute('''SELECT s.song_id, s.song_title, 
-                    CONCAT(a.first_name, " ", a.last_name),
-                    ab.album_title,
-                    g.genre_name 
-                    FROM songs s
-                    JOIN users u ON s.fk_user_id = u.user_id
-                    JOIN song_artist sa ON s.song_id = sa.fk_song_id
-                    JOIN artists a ON sa.fk_artist_id = a.artist_id
-                    JOIN albums ab ON s.fk_album_id = ab.album_id
-                    JOIN genres g ON s.fk_genre_id = g.genre_id
-                    WHERE u.username = %s''', (username,))
+        cur.execute('''SELECT * FROM dashboard_view WHERE username = %s''', (username,))
         data = cur.fetchall()
         cur.close()
 
         return jsonify(data)
 
+
+class SongProfileView(Resource):
+    def get(self):
+        songId = request.args.get('songId')
+
+        cur = mysql.connection.cursor()
+        cur.execute('''SELECT * FROM songprofile_view WHERE song_id = %s''', (songId,))
+        data = cur.fetchall()
+        cur.close()
+
+        formatted_data = []
+        for row in data:
+            formatted_row = list(row)
+            # Convert timedelta to string
+            formatted_row[7] = str(formatted_row[7])
+            formatted_data.append(formatted_row)
+
+        return jsonify(formatted_data)
 
 class Users(Resource):
     def get(self):
@@ -302,27 +310,13 @@ class SongArtist(Resource):
 
 class Copyright(Resource):
     def get(self):
+        songId = request.args.get('songId')
         cur = mysql.connection.cursor()
-        cur.execute('''SELECT * FROM copyright''')
+        cur.execute('''SELECT * FROM copyright WHERE fk_song_id = %s''', (songId,))
         data = cur.fetchall()
         cur.close
         return jsonify(data)
 
-    def post(self):
-
-        data = request.json
-        songId = data.get('songId')
-        copyrightHolder = data.get('copyrightHolder')
-        registrationDate = data.get('registrationDate')
-
-        # Insert data into the database
-        cur = mysql.connection.cursor()
-        cur.execute('''INSERT INTO copyright (fk_song_id, copyright_holder, registration_data) 
-                       VALUES (%s, %s, %s)''', (songId, copyrightHolder, registrationDate))
-        mysql.connection.commit()
-        cur.close()
-
-        return {'message': 'Copyright Added successfully'}, 201
 
 
 class Label(Resource):
@@ -519,6 +513,7 @@ api.add_resource(SongMetadata, "/songmetadata")
 api.add_resource(UserVaildate, "/uservaildate")
 api.add_resource(GetUserSongs, "/getusersongs")
 api.add_resource(getUserId, "/getuserid")
+api.add_resource(SongProfileView, "/songprofileview")
 
 
 if __name__ == '__main__':

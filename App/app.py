@@ -571,20 +571,19 @@ def songprofile():
     checkRegisteredSong = Payments.query.filter(
         Payments.song_id == song_id).first()
     BASE = "http://127.0.0.1:5000/"
-    response = requests.get(BASE + "songs", params={"songId": song_id})
-    response2 = requests.get(BASE + "songmetadata", params={"songId": song_id})
-
+    response = requests.get(BASE + "songprofileview", params={"songId": song_id})
+    response2 = requests.get(BASE + "copyright", params={"songId": song_id})
     songInfo = response.json()
-    metadata = response2.json()
-    print(response.json())
-    print(response2.json())
+    copyright = response2.json()
+    print(songInfo)
+    print(copyright)
 
     if checkRegisteredSong is not None:
         print(checkRegisteredSong.payment_id)
     else:
         print("checkRegisteredSong is None")
 
-    return render_template('songprofile.html', songInfo=songInfo, metadata=metadata, songId=song_id, checkRegisteredSong=checkRegisteredSong)
+    return render_template('songprofile.html', songInfo=songInfo, songId=song_id, checkRegisteredSong=checkRegisteredSong, copyright=copyright)
 
 
 ############################## UPDATE SONG #####################

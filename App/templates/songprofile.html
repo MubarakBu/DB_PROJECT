@@ -69,15 +69,24 @@
             </div>
             {% endif %}
             <div class="song-info">
-                <h1 class="song-title">{{ songInfo[0][0] }}</h1>
+                <h1 class="song-title">{{ songInfo[0][1] }}</h1>
                 <div class="song-details">
-                    <p>Artist: {{ songInfo[0][1] }}</p>
-                    <p>Album: {{ songInfo[0][2] }}</p>
-                    <p>Genre: {{ songInfo[0][3] }}</p>
-                    <p>Duration: {{ metadata[0][1] }}</p>
-                    <p>Song Language: {{ metadata[0][2] }}</p>
-                    <p>Release Date: {{ metadata[0][0] }}</p>
-                    <p>Label: {{ songInfo[0][4] }}</p>
+                    <p>Artist: {{ songInfo[0][2] }}</p>
+                    <p>Album: {{ songInfo[0][3] }}</p>
+                    <p>Genre: {{ songInfo[0][4] }}</p>
+                    <p>Duration: {{ songInfo[0][5] }}</p>
+                    <p>Song Language: {{ songInfo[0][6] }}</p>
+                    <p>Release Date: {{ songInfo[0][7] }}</p>
+                    <p>Label: {{ songInfo[0][8] }}</p>
+
+                    <div>
+                    {% if checkRegisteredSong %}
+                    <p> Copyright © By {{ copyright[0][2] }}</p>
+                    {% else %}
+                    <p> This Song is Not Register</p>
+                    {% endif %}
+                    </div>
+
                 </div>
             </div>
         </div>
