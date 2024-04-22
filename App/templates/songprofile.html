@@ -9,6 +9,12 @@
             display: flex;
             align-items: flex-start; /* Align items to the top */
         }
+        .not-registered {
+        color: red;
+        }
+        .registered {
+        color: rgb(6, 170, 6);
+        }
         .song-pic {
             width: 200px; /* Adjust the width as needed */
             height: 200px; /* Adjust the height as needed */
@@ -81,9 +87,9 @@
 
                     <div>
                     {% if checkRegisteredSong %}
-                    <small> Copyright © By {{ copyright[0][2] }}</small>
+                    <small class="registered"> Copyright © By {{ copyright[0][2] }}</small>
                     {% else %}
-                    <small> This Song is Not Register</small>
+                    <small class="not-registered"> This Song is Not Registered</small>
                     {% endif %}
                     </div>
 
