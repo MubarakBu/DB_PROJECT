@@ -44,7 +44,7 @@ SongRegistry is a dedicated platform for songwriters and song owners to easily r
 
 ![Logo](https://github.com/MubarakBu/DB_PROJECT/blob/main/db_project.png?raw=true)
 
-## Installation and running application
+## Installation
 
 1. Unzip attached zip file and open two new terminals.
 2. Navigate to the project directories (App and SongRegistry inside DB_PROJECT folder)
@@ -94,7 +94,7 @@ pip install -r requirement.txt
 
 7. Import The SQL Dump file to your MySQL
 
-## running application
+## Running application
 
 1. After installation, run backend first (App.py in SongRegistry directory) with:
 
@@ -105,5 +105,3 @@ python3 app.py
 before running frontend (App.py in App directory) with same command.
 
 2. copy url and paste address in frontend terminal in browser. Frontend runs on localhost ipv6 and ipv4 for backend.
-
-## App functionality
